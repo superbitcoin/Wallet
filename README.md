@@ -1,0 +1,2 @@
+# wallet
+SuperBitcoin Wallet

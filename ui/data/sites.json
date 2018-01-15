@@ -1,0 +1,18 @@
+{
+  "1Ksi6FfKERa88PD6nqBrNtS3DdfC3ChMjP": {
+    "added": 1513912512, 
+    "auth_key": "af7df287b1f5ddc96d24d4acccbb991cee1ea080c7a1c272c9f168d1a247b70f", 
+    "cache": {}, 
+    "modified": 1513912512, 
+    "optional_downloaded": 0, 
+    "own": true, 
+    "peers": 0, 
+    "permissions": [
+      "ADMIN"
+    ], 
+    "serving": true, 
+    "size": 5454, 
+    "size_optional": 0, 
+    "wrapper_key": "3d74e31eae7e47d146e64bd5b4dec3381185a75096672e8cfa62269e081c7823"
+  }
+}

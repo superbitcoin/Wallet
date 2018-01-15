@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>钱包</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <script type="text/javascript">
+        //弹出隐藏层
+        function ShowDiv(show_div, bg_div) {
+            document.getElementById(show_div).style.display = 'block';
+            document.getElementById(bg_div).style.display = 'block';
+            var bgdiv = document.getElementById(bg_div);
+            bgdiv.style.width = document.body.scrollWidth;
+            // bgdiv.style.height = $(document).height();
+            $("#" + bg_div).height($(document).height());
+        }
+        ;
+
+        //关闭弹出层
+        function CloseDiv(show_div, bg_div) {
+            document.getElementById(show_div).style.display = 'none';
+            document.getElementById(bg_div).style.display = 'none';
+        };
+
+        $(document).ready(function () {
+            $("#showHidden").click(function () {
+                $(".layout1").hide();
+                $("#layout").show();
+            });
+        });
+    </script>
+</head>
+<body>
+<div class="header">
+    <div class="header-box">
+        <img src="images/gg02.png" class="logo">
+        <ul>
+            <li>文件</li>
+            <li>设置</li>
+            <li>帮助</li>
+        </ul>
+    </div>
+</div>
+<div class="header_list">
+    <img src="images/top.png" alt="">
+</div>
+<div class="wrapper">
+    <div class="wrapper-box">
+        <div class="layout-left">
+            <ul class="layoutl-top" id="menu">
+                <li id="icon01" class="li-active">概况</li>
+                <li id="icon02">发送</li>
+                <li id="icon03">接收</li>
+                <li id="icon04">交易记录</li>
+            </ul>
+            <dl class="layoutdt-box">
+                <dt><img src="images/l1.png" alt=""></dt>
+                <dd><img src="images/l2.png" alt=""></dd>
+            </dl>
+            <ul class="layout-l3">
+                <li class="active">SBTC</li>
+                <li>MSBTC</li>
+                <li>PSSBTC</li>
+            </ul>
+            <div class="layout-last">
+                <p>正在与网络同步</p>
+                <div class="layout-lastbg"><label></label></div>
+                <span>落后3年和28周</span>
+            </div>
+        </div>
+
+        <div class="layout-right tab-active">
+            <div class="layoutr-title">
+                <span>余额</span>
+                <select>
+                    <option value="ddd">SBTC</option>
+                    <option value="ddd">MSBTC</option>
+                    <option value="ddd">PSBTC</option>
+                </select>
+            </div>
+            <div class="layoutr_main">
+                <div class="layoutrmain_font">
+                    <span id="balance_all">0.00000000</span>
+                    SBTC总额
+                </div>
+                <dl>
+                    <dt>可使用的余额：</dt>
+                    <dd id="bal_available">0.00000000SBTC</dd>
+                </dl>
+                <dl>
+                    <dt>等待中的余额：</dt>
+                    <dd id="bal_unconfirm">0.00000000SBTC</dd>
+                </dl>
+            </div>
+            <div class="layoutr-title">
+                <span>最近交易</span>
+            </div>
+            <div class="layoutr-content">
+                <table border="1">
+                    <tr class="box1">
+                        <th>日期</th>
+                        <th>类型</th>
+                        <th>地址</th>
+                        <th>金额</th>
+                    </tr>
+                    <tr>
+                        <td>2018/1/2-12:23 26</td>
+                        <td>接受</td>
+                        <td>1LG2ieN41UaswwScdQE4mwKeZoSSsAi9nf</td>
+                        <td>+101.00000000 SBTC</td>
+                    </tr>
+                    <tr>
+                        <td>2018/1/2-12:23 26</td>
+                        <td>发送</td>
+                        <td>1LG2ieN41UaswwSfdsfeyhtpoijhnGHJAiwq</td>
+                        <td>-99.00000000 SBTC</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="layout-right">
+            <div class="layoutr-title">
+                <span>发送</span>
+                <select>
+                    <option value="ddd">SBTC</option>
+                    <option value="ddd">MSBTC</option>
+                    <option value="ddd">PSBTC</option>
+                </select>
+            </div>
+            <div class="center">
+                <div class="form-group">
+                    <label class="label">付给（T）：</label>
+                    <input id="toAddress" class="form-control"
+                           placeholder="请输入一个比特币地址(例如 1NS7iag9dhsjpiuopwqm,vcmHISA)">
+                </div>
+
+                <div class="form-group">
+                    <label class="label">标签（L）：</label>
+                    <input class="form-control" placeholder="为这个地址输入一个标签，以便将它添加到你的地址薄">
+                </div>
+
+                <div class="form-group">
+                    <label class="label">金额（M）：</label>
+                    <input id="pay_value" class="form-control money" placeholder="">
+
+                    <label id="pay_value" class="validcode"><input name="Fruit" type="checkbox" value=""/>从金额中减去交易费（U）
+                    </label>
+                </div>
+            </div>
+
+            <div class="layoutr-title">
+                <span>交易费用</span>
+            </div>
+            <div class="choice－center">
+                <div class="choose">Warning Fee estimation is......</div>
+                <div class="recommend">
+                    <input name="Fruit" type="radio" value="" id="checkbox-1"><label for="checkbox-1"></label>
+                    <span>推荐：</span>
+                    <div>矿工费：<span>0.000200000 SBTL/KB</span></div>
+                </div>
+                <div class="target" style="">确认时间目标：
+                    <select>
+                        <option value="ddd">60分钟（6blocks)</option>
+                        <option value="ddd">30分钟（3blocks)</option>
+                        <option value="ddd">10分钟（1blocks)</option>
+                    </select>
+                </div>
+
+                <div class="custom">
+                    <input name="Fruit" type="radio" value="" id="checkbox-2"><label for="checkbox-2"></label>
+                    <div>自定义：
+                        <span>每kb<input type="number" step="0.000001" min="0.000001" max="100.000000"
+                                        value="0.00000000"/></span>
+                        <select>
+                            <option value="ddd">SBTC</option>
+                            <option value="ddd">MSBTC</option>
+                            <option value="ddd">PSBTC</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="be-careful">
+                    <label><input name="Fruit" type="checkbox" value=""/> 只支付必要费用0.00001000 SBTC/kb（请注意提示信息）</label>
+                </div>
+
+                <label><input name="Fruit" type="checkbox" value=""/>RequestReplace-By-Fee</label>
+            </div>
+            <div class="send-out">
+                <span>余额：0.00000000</span>
+                <input onclick="return Page.sendToAddress()" type="submit" value="发送"/>
+            </div>
+            <span id="payHash"></span>
+        </div>
+
+        <div class="layout-right layout1">
+            <div class="layoutr-title">
+                <span>接受</span>
+                <select>
+                    <option value="ddd">SBTC</option>
+                    <option value="ddd">MSBTC</option>
+                    <option value="ddd">PSBTC</option>
+                </select>
+            </div>
+            <div class="take-over">
+                <div class="receive-center">
+                    <div class="form-group">我的接收信息</div>
+                    <div class="form-group">地址：<span>1LG2ieN41UaswwScdQE4mwKeZoSSsAi9nf</span>
+                        <input type="button" value="" style="">
+                    </div>
+
+                    <div class="btn">
+                        <input id="Button1" type="button" value="新建地址" onclick="ShowDiv('MyDiv','fade')">
+                        <div id="fade" class="black_overlay"></div>
+                        <div id="MyDiv" class="white_content">
+                            <div style="" id="move">
+                                <span onclick="CloseDiv('MyDiv','fade')">X</span>
+                                <form action="/example/html/form_action.asp" method="get">
+                                    <p>标签新建命名: <input type="text" name="fname"/></p>
+                                    <input type="submit" value="确认"/>
+                                </form>
+                            </div>
+                        </div>
+                        <input type="button" value="管理地址" id="showHidden">
+
+                    </div>
+                </div>
+                <div class="code">
+                    <!--<img src="images/4.pic.jpg">-->
+                    <div id="qrcode_tx"></div>
+                    <p id="qrcode" onclick="showQR()">扫描二维码获取地址</p>
+                </div>
+
+            </div>
+            <div class="layoutr-title">
+                <span>接受记录</span>
+            </div>
+            <div class="layoutr-content">
+                <table border="1">
+                    <tr class="box1">
+                        <th>日期</th>
+                        <th>地址</th>
+                        <th>总额（SBTC）</th>
+                    </tr>
+                    <tr>
+                        <td>2018/1/2-12:23 26</td>
+                        <td>1LG2ieN41UaswwScdQE4mwKeZoSSsAi9nf</td>
+                        <td>101.00000000</td>
+                    </tr>
+
+                </table>
+            </div>
+        </div>
+
+        <div class="layout-right">
+            <div class="layoutr-title">
+                <span>交易记录</span>
+                <select>
+                    <option value="ddd">SBTC</option>
+                    <option value="ddd">MSBTC</option>
+                    <option value="ddd">PSBTC</option>
+                </select>
+            </div>
+            <div class="layoutr-content">
+                <table border="1">
+                    <tr class="box1">
+                        <th>日期</th>
+                        <th>类型</th>
+                        <th>地址</th>
+                        <th>金额</th>
+                    </tr>
+                    <tr>
+                        <td>2018/1/2-12:23 26</td>
+                        <td>接受</td>
+                        <td>1LG2ieN41UaswwScdQE4mwKeZoSSsAi9nf</td>
+                        <td>+101.00000000 SBTC</td>
+                    </tr>
+                    <tr>
+                        <td>2018/1/2-12:23 26</td>
+                        <td>发送</td>
+                        <td>1LG2ieN41UaswwSfdsfeyhtpoijhnGHJAiwq</td>
+                        <td>-101.00000000 SBTC</td>
+                    </tr>
+                </table>
+            </div>
+            </divtransaction>
+        </div>
+
+        <div id="layout">
+            <div class="layoutr-title">
+                <span>接受记录</span>
+            </div>
+            <div class="layoutr-content">
+                <table border="1">
+                    <tr class="box1">
+                        <th>标签</th>
+                        <th>地址</th>
+                        <th>操作</th>
+                    </tr>
+                    <tr>
+                        <td>a001</td>
+                        <td>1LG2ieN41UaswwScdQE4mwKeZoSSsAi9nf</td>
+                        <td>00000000</td>
+                    </tr>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <h1>余额</h1>
+    <div id="balance"></div>
+    <h1>地址</h1>
+    <div id="address"></div>
+    <input type="button" id="getBalance" onclick="return Page.getBalance()" value="获取余额"/>
+    <input type="button" id="getAddress" onclick="return Page.getNewAddress()" value="获取地址"/>
+    <input type="button" id="stop" onclick="return Page.stopWallet()" value="停止"/>
+</div>
+<!--<input type="text" id="message"><input type="button" id="send" onclick="return Page.sendMsg()" value="发送"/>-->
+<div>
+    发送地址：
+    <input id="fromAddress"/></div>
+接收地址：
+<input id=""/>
+<input type="button" id="send" onclick="return Page.sendToAddress()" value="发送"/>
+<br>
+<br>
+<div>
+    地址标签
+    <input id="newAddrLabel"/>
+    <br>
+    <input type="button" id="getNewAddr" onclick="return Page.getNewAddress()" value="获取新地址"/>
+</div>
+<br>
+<div>
+    私钥地址标签
+    <input id="addr_private"/>
+    <input type="button" id="getPriKey" onclick="return Page.dumpprivkey()" value="导出私钥"/>
+</div>
+<br>
+<div>
+    私钥
+    <input id="privateKey"/>
+    <br>
+    私钥标签
+    <input id="privateKeyLabel"/>
+    <input type="button" id="importPriKey" onclick="return Page.importPriKey()" value="导入私钥"/>
+</div>
+
+<br>
+<ul id="messages">
+    <li>欢迎来到 SBTC钱包！</li>
+</ul>
+<script type="text/javascript" src="js/all.js" async></script>
+<script type="text/javascript" src="js/qrcode.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".fixbutton-bg").visibility = false;
+    });
+</script>
+<script>
+    $(function () {
+        $("#menu li").click(function () {
+            var $this = this;
+            $($('#menu li')).each(function (i, el) {
+                var tab = $('.layout-right').eq(i);
+                if ($this == el) {
+                    $($this).addClass('li-active');
+                    tab.addClass('tab-active');
+                } else {
+                    $(el).removeClass('li-active');
+                    tab.removeClass('tab-active');
+                }
+            })
+        });
+    });
+
+    var qrcode = new QRCode(document.getElementById("qrcode_tx"), {
+        width : 100,
+        height : 100
+    });
+
+    function showQR() {
+//        var _qrcode = new QRCode('1LG2ieN41UaswwScdQE4mwKeZoSSsAi9nf');
+        qrcode.makeCode("1LG2ieN41UaswwScdQE4mwKeZoSSsAi9nf");
+    }
+
+    var i = 0;
+
+    function timer() {
+        i++;
+        alert("定时器: " + i);
+    }
+
+//    var timename = setInterval(timer, 5000);
+
+</script>
+</body>
+</html>
