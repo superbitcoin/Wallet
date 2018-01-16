@@ -7,7 +7,6 @@ import sys
 # SBTC Modules
 import superbitcoin
 
-# asdfasdf
 def main():
     sys.argv = [sys.argv[0]]+["--open_browser", "default_browser"]+sys.argv[1:]
     superbitcoin.main()

@@ -148,6 +148,10 @@
         extend(ZeroChat, superClass);
 
         function ZeroChat() {
+            this.recordAddress = bind(this.recordAddress, this);
+            this.recordAll = bind(this.recordAll, this);
+            this.addressList = bind(this.addressList, this);
+            this.accountList = bind(this.accountList, this);
             this.stopWallet = bind(this.stopWallet, this);
             this.getNewAddress = bind(this.getNewAddress, this);
             this.getBalance = bind(this.getBalance, this);
@@ -177,9 +181,10 @@
             })(this));
             this.cmd("walletGetInfo", [], (function (_this) {
                 return function (result) {
-                    return document.getElementById("balance").innerHTML = JSON.stringify(result[0].result, null, 2) +"\n";
+                    return document.getElementById("balance").innerHTML = JSON.stringify(result[0].result, null, 2) + "\n";
                 };
             })(this));
+            Page.recordAll();
             return this.cmd("walletGetBalance", ["address", "SBTC"], (function (_this) {
                 return function (result) {
                     var input_balance = document.getElementById("balance_all");
@@ -255,11 +260,105 @@
                 return function (result) {
                     if (result[0].error == null) {
                         document.getElementById("payHash").innerHTML = result[0].result;
-                    }else {
+                    } else {
                         alert("交易发送错误");
                     }
                     return document.getElementById("balance").innerHTML = result[0].result;
 
+                };
+            })(this));
+        };
+        var addrList = [];
+        ZeroChat.prototype.accountList = function () {
+            // mydSgrG816yq8Kjhe3uW3bkjFLgBnkaCs1
+            // n2ynxqSzhgyJJ5KBHPijKzNMqsgUd9Jsia "123"
+            return this.cmd("walletListAccounts", [], (function (_this) {
+                return function (result) {
+                    var list = result[0].result;
+                    for (var item in list) {
+                        // var jValue = accountList[item];//key所对应的value
+                        Page.addressList(item);
+                    }
+
+                    return document.getElementById("balance").innerHTML = addrList.valueOf().toString();
+                };
+            })(this));
+        };
+
+        ZeroChat.prototype.addressList = function (account) {
+            // mydSgrG816yq8Kjhe3uW3bkjFLgBnkaCs1
+            // n2ynxqSzhgyJJ5KBHPijKzNMqsgUd9Jsia "123"
+            return this.cmd("walletGetAddressesListByAccount", [account], (function (_this) {
+                return function (result) {
+                    var list = result[0].result;
+                    for (var i = 0; i < list.length; i++) {
+                        // var jValue = accountList[item];//key所对应的value
+                        addrList.push(list[i]);
+                        $("#select_send_addr").append("<option>" + list[i] + "</option>");
+                    }
+                    return document.getElementById("balance").innerHTML = addrList.toString();
+                };
+            })(this));
+        };
+
+        ZeroChat.prototype.recordAll = function () {
+            // mydSgrG816yq8Kjhe3uW3bkjFLgBnkaCs1
+            // n2ynxqSzhgyJJ5KBHPijKzNMqsgUd9Jsia "123"
+            return this.cmd("walletListTransactions", [], (function (_this) {
+                return function (result) {
+                    var t1 = document.getElementById("record_all");
+                    var rowNum = t1.rows.length;
+                    if (rowNum > 1) {
+                        for (i = 1; i < rowNum; i++) {
+                            t1.deleteRow(i);
+                            rowNum = rowNum - 1;
+                            i = i - 1;
+                        }
+                    }
+                    var list = result[0].result;
+                    for (var i = 0; i < list.length; i++) {
+                        // for (var item in list) {
+                        //     // var jValue = accountList[item];//key所对应的value
+                        //     addrList.push(list[i]);
+                        //     $("#select_send_addr").append("<option>" + list[i] + "</option>");
+                        $("#record_all").append("<tr>" + "<td>" + formatDate(new Date(list[i].time)) + "</td>" +
+                            "<td>发送</td>" +
+                            " <td>" + list[i].address + "</td>" +
+                            "<td>" + list[i].amount + " SBTC</td>" +
+                            "</tr>")
+                    }
+                    return document.getElementById("balance").innerHTML = JSON.stringify(list, null, 2);
+                };
+            })(this));
+        };
+
+        ZeroChat.prototype.recordAddress = function () {
+            // mydSgrG816yq8Kjhe3uW3bkjFLgBnkaCs1
+            // n2ynxqSzhgyJJ5KBHPijKzNMqsgUd9Jsia "123"
+            return this.cmd("walletListTransactions", [], (function (_this) {
+                return function (result) {
+                    var list = result[0].result;
+                    var t1 = document.getElementById("record_address");
+                    var rowNum = t1.rows.length;
+                    if (rowNum > 1) {
+                        for (i = 1; i < rowNum; i++) {
+                            t1.deleteRow(i);
+                            rowNum = rowNum - 1;
+                            i = i - 1;
+                        }
+                    }
+                    for (var i = 0; i < list.length; i++) {
+                        // for (var item in list) {
+                        //     // var jValue = accountList[item];//key所对应的value
+                        //     addrList.push(list[i]);
+                        //     $("#select_send_addr").append("<option>" + list[i] + "</option>");
+                        $("#record_address").append("<tr>" + "<td>" + formatDate(new Date(list[i].time)) + "</td>" +
+                            "<td>发送</td>" +
+                            " <td>" + list[i].address + "</td>" +
+                            "<td>" + list[i].amount + " SBTC</td>" +
+                            "</tr>")
+                    }
+                    return document.getElementById("balance").innerHTML = JSON.stringify(list, null, 2);
                 };
             })(this));
         };
@@ -279,3 +378,13 @@
     window.Page = new ZeroChat();
 
 }).call(this);
+
+function formatDate(now) {
+    var year = now.getYear();
+    var month = now.getMonth() + 1;
+    var date = now.getDate();
+    var hour = now.getHours();
+    var minute = now.getMinutes();
+    var second = now.getSeconds();
+    return "20" + year + "-" + month + "-" + date + "   " + hour + ":" + minute + ":" + second;
+}
