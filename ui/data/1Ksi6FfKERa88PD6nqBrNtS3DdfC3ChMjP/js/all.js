@@ -148,6 +148,11 @@
         extend(ZeroChat, superClass);
 
         function ZeroChat() {
+            this.walletPassPhrase = bind(this.walletPassPhrase, this);
+            this.dumpWallet = bind(this.dumpWallet, this);
+            this.encryptWallet = bind(this.encryptWallet, this);
+            this.getInfo = bind(this.getInfo, this);
+            this.getWalletInfo = bind(this.getWalletInfo, this);
             this.recordAddress = bind(this.recordAddress, this);
             this.recordAll = bind(this.recordAll, this);
             this.addressList = bind(this.addressList, this);
@@ -174,34 +179,15 @@
         };
 
         ZeroChat.prototype.onOpenWebsocket = function (e) {
-            this.cmd("serverInfo", {}, (function (_this) {
-                return function (server_info) {
-                    return _this.addLine("服务器信息: <pre>" + JSON.stringify(server_info, null, 2) + "</pre>");
-                };
-            })(this));
-            this.cmd("walletGetInfo", [], (function (_this) {
-                return function (result) {
-                    return document.getElementById("balance").innerHTML = JSON.stringify(result[0].result, null, 2) + "\n";
-                };
-            })(this));
+            Page.sendMsg();
+            Page.getInfo();
             Page.recordAll();
-            return this.cmd("walletGetBalance", ["address", "SBTC"], (function (_this) {
-                return function (result) {
-                    var input_balance = document.getElementById("balance_all");
-                    var input_unconfirm = document.getElementById("bal_unconfirm");
-                    var input_available = document.getElementById("bal_available");
-                    input_balance.innerHTML = result[0].result.balance + result[0].result.unconfirmed_balance;
-                    input_unconfirm.innerHTML = result[0].result.unconfirmed_balance + " SBTC";
-                    input_available.innerHTML = result[0].result.balance + " SBTC";
-                    return document.getElementById("balance").innerHTML += JSON.stringify(result[0].result, null, 2);
-                };
-            })(this));
+            Page.getBalance();
+            Page.getWalletInfo();
         };
 
         ZeroChat.prototype.sendMsg = function () {
-            var input_data;
-            input_data = document.getElementById("message").value;
-            return this.cmd("siteInfo", [input_data], (function (_this) {
+            return this.cmd("siteInfo", [], (function (_this) {
                 return function (site_info) {
                     return _this.addLine("站点信息: <pre>" + JSON.stringify(site_info, null, 2) + "</pre>");
                 };
@@ -251,23 +237,24 @@
         };
 
         ZeroChat.prototype.sendToAddress = function () {
-            var fromAddress = document.getElementById("fromAddress").value;
+            // var fromAddress = document.getElementById("fromAddress").value;
             var toAddress = document.getElementById("toAddress").value;
             var value = document.getElementById("pay_value").value;
             // mydSgrG816yq8Kjhe3uW3bkjFLgBnkaCs1
             // n2ynxqSzhgyJJ5KBHPijKzNMqsgUd9Jsia "123"
-            return this.cmd("walletSendToAddress", [fromAddress, toAddress, value], (function (_this) {
+            //mxHvi6U1NdtxiC82mpX6f6LKpAxdKUXjDq "asfd"
+            return this.cmd("walletSendToAddress", [toAddress, value], (function (_this) {
                 return function (result) {
-                    if (result[0].error == null) {
+                    if (result != null && result[0].error == null) {
                         document.getElementById("payHash").innerHTML = result[0].result;
                     } else {
                         alert("交易发送错误");
                     }
                     return document.getElementById("balance").innerHTML = result[0].result;
-
                 };
             })(this));
         };
+        var recevieAddr = null;
         var addrList = [];
         ZeroChat.prototype.accountList = function () {
             // mydSgrG816yq8Kjhe3uW3bkjFLgBnkaCs1
@@ -275,12 +262,17 @@
             return this.cmd("walletListAccounts", [], (function (_this) {
                 return function (result) {
                     var list = result[0].result;
+                    // $("#select_send_addr").empty();
+                    $("#select_receive_addr").empty();
+                    recevieAddr = null;
                     for (var item in list) {
                         // var jValue = accountList[item];//key所对应的value
                         Page.addressList(item);
                     }
-
-                    return document.getElementById("balance").innerHTML = addrList.valueOf().toString();
+                    if (addrList != null && addrList.length > 0) {
+                        qrcode.makeCode(addrList[0]);
+                    }
+                    document.getElementById("balance").innerHTML = addrList.valueOf().toString();
                 };
             })(this));
         };
@@ -293,23 +285,24 @@
                     var list = result[0].result;
                     for (var i = 0; i < list.length; i++) {
                         // var jValue = accountList[item];//key所对应的value
+                        if (recevieAddr == null) {
+                            recevieAddr = list[0];
+                        }
                         addrList.push(list[i]);
-                        $("#select_send_addr").append("<option>" + list[i] + "</option>");
+                        // $("#select_send_addr").append("<option>" + list[i] + "</option>");
+                        $("#select_receive_addr").append("<option>" + list[i] + "</option>");
                     }
-                    return document.getElementById("balance").innerHTML = addrList.toString();
                 };
             })(this));
         };
 
         ZeroChat.prototype.recordAll = function () {
-            // mydSgrG816yq8Kjhe3uW3bkjFLgBnkaCs1
-            // n2ynxqSzhgyJJ5KBHPijKzNMqsgUd9Jsia "123"
             return this.cmd("walletListTransactions", [], (function (_this) {
                 return function (result) {
                     var t1 = document.getElementById("record_all");
                     var rowNum = t1.rows.length;
                     if (rowNum > 1) {
-                        for (i = 1; i < rowNum; i++) {
+                        for (var i = 1; i < rowNum; i++) {
                             t1.deleteRow(i);
                             rowNum = rowNum - 1;
                             i = i - 1;
@@ -317,10 +310,6 @@
                     }
                     var list = result[0].result;
                     for (var i = 0; i < list.length; i++) {
-                        // for (var item in list) {
-                        //     // var jValue = accountList[item];//key所对应的value
-                        //     addrList.push(list[i]);
-                        //     $("#select_send_addr").append("<option>" + list[i] + "</option>");
                         $("#record_all").append("<tr>" + "<td>" + formatDate(new Date(list[i].time)) + "</td>" +
                             "<td>发送</td>" +
                             " <td>" + list[i].address + "</td>" +
@@ -348,12 +337,9 @@
                         }
                     }
                     for (var i = 0; i < list.length; i++) {
-                        // for (var item in list) {
-                        //     // var jValue = accountList[item];//key所对应的value
-                        //     addrList.push(list[i]);
-                        //     $("#select_send_addr").append("<option>" + list[i] + "</option>");
+                        var type = list[i].amount > 0 ? "接收" : "发送";
                         $("#record_address").append("<tr>" + "<td>" + formatDate(new Date(list[i].time)) + "</td>" +
-                            "<td>发送</td>" +
+                            "<td>" + type + "</td>" +
                             " <td>" + list[i].address + "</td>" +
                             "<td>" + list[i].amount + " SBTC</td>" +
                             "</tr>")
@@ -367,6 +353,55 @@
             return this.cmd("walletStop", [], (function (_this) {
                 return function (result) {
                     return document.getElementById("balance").innerHTML = result[0].result;
+                };
+            })(this));
+        };
+
+        ZeroChat.prototype.getInfo = function () {
+            this.cmd("walletGetInfo", [], (function (_this) {
+                return function (result) {
+                    return document.getElementById("balance").innerHTML = JSON.stringify(result[0].result, null, 2) + "\n";
+                };
+            })(this));
+        };
+        // walletpassphrase
+        ZeroChat.prototype.encryptWallet = function () {
+            var password = document.getElementById("_fromAddress").value;
+            this.cmd("walletEncryptWallet", [password], (function (_this) {
+                return function (result) {
+                    if (result != null) {
+                        return document.getElementById("balance").innerHTML = JSON.stringify(result[0].result, null, 2) + "\n";
+                    }
+                };
+            })(this));
+        };
+
+        ZeroChat.prototype.walletPassPhrase = function () {
+            var password = document.getElementById("_fromAddress").value;
+            this.cmd("walletPassPhrase", [password, 10], (function (_this) {
+                return function (result) {
+                    return document.getElementById("balance").innerHTML = JSON.stringify(result[0].result, null, 2) + "\n";
+                };
+            })(this));
+        };
+
+        ZeroChat.prototype.dumpWallet = function () {
+            this.cmd("walletEncryptWallet", [], (function (_this) {
+                return function (result) {
+                    return document.getElementById("balance").innerHTML = JSON.stringify(result[0].result, null, 2) + "\n";
+                };
+            })(this));
+        };
+
+        ZeroChat.prototype.getWalletInfo = function () {
+            var input_data;
+            input_data = document.getElementById("message").value;
+            return this.cmd("walletgetWalletInfo", [input_data], (function (_this) {
+                return function (wallet_info) {
+                    if (wallet_info[0].result.unlocked_until != null) {
+                        alert("钱包加密");
+                    }
+                    return _this.addLine("钱包信息: <pre>" + JSON.stringify(wallet_info, null, 2) + "</pre>");
                 };
             })(this));
         };

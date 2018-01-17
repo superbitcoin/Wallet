@@ -516,7 +516,7 @@ class UiWebsocket(object):
         print(data)
         return self.response(to, data)
 
-    def actionWalletSendToAddress(self, to, fromAddr, toAddr, amount):
+    def actionWalletSendToAddress(self, to, toAddr, amount):
         data = None
         print("------actionWalletSendToAddress--------")
         url = "http://127.0.0.1:18334"
@@ -600,7 +600,7 @@ class UiWebsocket(object):
 
     def actionWalletListAccounts(self, to):
         data = None
-        print("------actionAccountList--------")
+        print("------actionWalletListAccounts--------")
         url = "http://127.0.0.1:18334"
         postdata = dict(method='listaccounts', params=[], id=1)
         post = []
@@ -640,9 +640,89 @@ class UiWebsocket(object):
 
     def actionWalletGetAddressesListByAccount(self, to, label):
         data = None
-        print("------actionAccountList--------")
+        print("------actionWalletGetAddressesListByAccount--------")
         url = "http://127.0.0.1:18334"
         postdata = dict(method='getaddressesbyaccount', params=[label], id=1)
+        post = []
+        post.append(postdata)
+        req = urllib2.Request(url, json.dumps(post))
+        req.add_header('Content-Type', 'application/json;charset=utf-8')
+        auth = base64.b64encode('bitcoin:local321')
+        req.add_header("Authorization", 'Basic ' + auth)
+        try:
+            response = urllib2.urlopen(req)
+            data = json.loads(response.read())
+        except Exception, err:
+            print err.message
+
+        print(data)
+        return self.response(to, data)
+
+    def actionWalletGetWalletInfo(self, to):
+        data = None
+        print("------actionWalletGetWalletInfo--------")
+        url = "http://127.0.0.1:18334"
+        postdata = dict(method='getwalletinfo', id=1)
+        post = []
+        post.append(postdata)
+        req = urllib2.Request(url, json.dumps(post))
+        req.add_header('Content-Type', 'application/json;charset=utf-8')
+        auth = base64.b64encode('bitcoin:local321')
+        req.add_header("Authorization", 'Basic ' + auth)
+        try:
+            response = urllib2.urlopen(req)
+            data = json.loads(response.read())
+        except Exception, err:
+            print err.message
+
+        print(data)
+        return self.response(to, data)
+
+    def actionWalletEncryptWallet(self, to, password):
+        data = None
+        print("------actionWalletEncryptWallet--------")
+        url = "http://127.0.0.1:18334"
+        postdata = dict(method='encryptwallet', params=[password], id=1)
+        post = []
+        post.append(postdata)
+        req = urllib2.Request(url, json.dumps(post))
+        req.add_header('Content-Type', 'application/json;charset=utf-8')
+        auth = base64.b64encode('bitcoin:local321')
+        req.add_header("Authorization", 'Basic ' + auth)
+        try:
+            response = urllib2.urlopen(req)
+            data = json.loads(response.read())
+        except Exception, err:
+            print err.message
+
+        print(data)
+        return self.response(to, data)
+
+    def actionWalletDumpWallet(self, to, password):
+        data = None
+        print("------actionWalletDumpWallet--------")
+        url = "http://127.0.0.1:18334"
+        postdata = dict(method='dumpwallet', params=[password], id=1)
+        post = []
+        post.append(postdata)
+        req = urllib2.Request(url, json.dumps(post))
+        req.add_header('Content-Type', 'application/json;charset=utf-8')
+        auth = base64.b64encode('bitcoin:local321')
+        req.add_header("Authorization", 'Basic ' + auth)
+        try:
+            response = urllib2.urlopen(req)
+            data = json.loads(response.read())
+        except Exception, err:
+            print err.message
+
+        print(data)
+        return self.response(to, data)
+
+    def actionWalletPassPhrase(self, to, password, time):
+        data = None
+        print("------actionWalletPassPhrase--------")
+        url = "http://127.0.0.1:18334"
+        postdata = dict(method='walletpassphrase', params=[password, time], id=1)
         post = []
         post.append(postdata)
         req = urllib2.Request(url, json.dumps(post))

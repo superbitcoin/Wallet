@@ -130,12 +130,12 @@
                 </select>
             </div>
             <div class="center">
-                <div class="form-group">
-                    <label class="label">支付地址（T）：</label>
-                    <select id="select_send_addr">
-                        <option value="ddd">请选择支付地址</option>
-                    </select>
-                </div>
+                <!--<div class="form-group">-->
+                    <!--<label class="label">支付地址（T）：</label>-->
+                    <!--<select id="select_send_addr">-->
+                        <!--<option value="ddd">请选择支付地址</option>-->
+                    <!--</select>-->
+                <!--</div>-->
                 <div class="form-group">
                     <label class="label">付给（T）：</label>
                     <input id="toAddress" class="form-control"
@@ -149,9 +149,9 @@
 
                 <div class="form-group">
                     <label class="label">金额（M）：</label>
-                    <input id="" class="form-control money" placeholder="">
+                    <input id="pay_value" class="form-control money" placeholder="">
 
-                    <label id="pay_value" class="validcode"><input name="Fruit" type="checkbox" value=""/>从金额中减去交易费（U）
+                    <label class="validcode"><input name="Fruit" type="checkbox" value=""/>从金额中减去交易费（U）
                     </label>
                 </div>
             </div>
@@ -194,7 +194,7 @@
             </div>
             <div class="send-out">
                 <span>余额：0.00000000</span>
-                <input onclick="return Page.sendToAddress()" type="submit" value="发送"/>
+                <input onclick="Page.sendToAddress()" type="submit" value="发送"/>
             </div>
             <span id="payHash"></span>
         </div>
@@ -214,9 +214,6 @@
                     <div class="form-group">地址：
                         <!--<span>1LG2ieN41UaswwScdQE4mwKeZoSSsAi9nf</span>-->
                         <select id="select_receive_addr">
-                            <option value="ddd">1LG2ieN41UaswwScdQE4mwKeZoSSsAi9nf</option>
-                            <option value="ddd">2LG2ieN41UaswwScdQE4mwKeZoSSsAi9nf</option>
-                            <option value="ddd">3LG2ieN41UaswwScdQE4mwKeZoSSsAi9nf</option>
                         </select>
                         <input type="button" value="" style="">
                     </div>
@@ -281,21 +278,9 @@
                         <th>地址</th>
                         <th>金额</th>
                     </tr>
-                    <tr>
-                        <td>2018/1/2-12:23 26</td>
-                        <td>接受</td>
-                        <td>1LG2ieN41UaswwScdQE4mwKeZoSSsAi9nf</td>
-                        <td>+101.00000000 SBTC</td>
-                    </tr>
-                    <tr>
-                        <td>2018/1/2-12:23 26</td>
-                        <td>发送</td>
-                        <td>1LG2ieN41UaswwSfdsfeyhtpoijhnGHJAiwq</td>
-                        <td>-101.00000000 SBTC</td>
-                    </tr>
                 </table>
             </div>
-            </divtransaction>
+            </div>
         </div>
 
         <div id="layout">
@@ -325,12 +310,14 @@
     <div id="balance"></div>
     <h1>地址</h1>
     <div id="address"></div>
-    <input type="button" id="getBalance" onclick="return Page.getBalance()" value="获取余额"/>
-    <input type="button" id="getAddress" onclick="return Page.getNewAddress()" value="获取地址"/>
-    <input type="button" id="listAccounts" onclick="return Page.accountList()" value="获取账号列表"/>&nbsp;&nbsp;&nbsp;
-    <input type="button" id="getAddressByAccount" onclick="return Page.addressList()" value="通过账号获取地址列表"/>&nbsp;&nbsp;
-    <input type="button" id="listTransaction" onclick="return Page.recordAll()" value="交易记录"/>&nbsp;&nbsp;&nbsp;
-    <input type="button" id="stop" onclick="return Page.stopWallet()" value="停止"/>
+    <input type="button" id="getBalance" onclick="Page.getBalance()" value="获取余额"/>
+    <input type="button" id="getAddress" onclick="Page.getNewAddress()" value="获取地址"/>
+    <input type="button" id="listAccounts" onclick="Page.accountList()" value="获取账号列表"/>&nbsp;&nbsp;&nbsp;
+    <input type="button" id="getAddressByAccount" onclick="Page.addressList()" value="通过账号获取地址列表"/>&nbsp;&nbsp;
+    <input type="button" id="listTransaction" onclick="Page.recordAll()" value="交易记录"/>&nbsp;&nbsp;&nbsp;
+    <input type="button" id="encryptWallet" onclick="Page.encryptWallet()" value="加密钱包"/>&nbsp;&nbsp;
+    <input type="button" id="walletPassPhrase" onclick="Page.walletPassPhrase()" value="解密钱包"/>&nbsp;&nbsp;&nbsp;
+    <input type="button" id="stop" onclick="Page.stopWallet()" value="停止"/>
 </div>
 <!--<input type="text" id="message"><input type="button" id="send" onclick="return Page.sendMsg()" value="发送"/>-->
 <div>
@@ -397,9 +384,9 @@
     });
 
     $("#icon03").click(function () {
-        Page.addressList();
-        var address = $("#select_receive_addr").find("option:selected").text();
-        showQR(address);
+        Page.accountList();
+//        var address = $("#select_receive_addr").find("option:selected").text();
+//        setTimeout(showQR(address),500);
     });
 
     $("#icon04").click(function () {
@@ -427,4 +414,4 @@
 
 </script>
 </body>
-</html>
+</html>                     
