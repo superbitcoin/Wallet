@@ -1,4 +1,4 @@
-class ZeroChat extends ZeroFrame
+class SbtcChat extends Frame
   init: ->
     @addLine "初始化成功"
 
@@ -33,4 +33,4 @@ class ZeroChat extends ZeroFrame
     document.getElementById("address").innerHTML = "asdfjiwejofisjdfoij"
 
 
-window.Page = new ZeroChat()
+window.Page = new SbtcChat()

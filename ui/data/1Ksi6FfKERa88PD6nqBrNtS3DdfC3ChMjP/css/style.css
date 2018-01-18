@@ -32,12 +32,12 @@ body,html {
 }
 .header_list{
 	background: url(../images/gg01.jpg) repeat;
-	height: 200px;
+	height: 130px;
 }
 .header_list img {
 	display: block;
 	margin: 0 auto;
-	padding-top: 70px;
+	padding-top: 38px;
 }
 .wrapper {
 	width: 1000px;
@@ -57,20 +57,20 @@ body,html {
 }
 .layout-right {
 	display: none;
-	margin-left: 2px;
-	margin-top: 8px;
+	margin-left: 0px;
+	margin-top: 5px;
 	min-height: 830px;
 	background: #fff;
 	padding: 0 35px;
-	box-shadow: 1px 1px 1px #C9C9C9;
+	/* box-shadow: 1px 1px 1px #C9C9C9; */
 }
 .layoutl-top {
-	margin-top: 8px;
+	margin-top: 5px;
 	border-top: 38px solid #4e4294;
 	background: #fff;
 	list-style: none;
 	padding: 0 0 10px 0;
-	box-shadow: 1px 1px 1px #C9C9C9;
+	/* box-shadow: 1px 1px 1px #C9C9C9; */
 }
 .layoutl-top li {
 	display: block;
@@ -111,24 +111,30 @@ body,html {
 .layoutl-top #icon04.li-acitve, .layoutl-top #icon04:hover {
 	background: url(../images/gg06.png) 20px center no-repeat;
 }
+.layoutl-top #icon05 {
+	background: url(../images/ggb8.png) 20px center no-repeat;
+}
+.layoutl-top #icon05.li-acitve, .layoutl-top #icon05:hover {
+	background: url(../images/ggb7.png) 20px center no-repeat;
+}
 .layoutr-title {
 	padding-top: 30px;
 	border-bottom: 2px solid #f18e2a;
 	overflow: hidden;
 }
 .layoutr-title span {
-	background: url(../images/gg10.png) right center no-repeat;
+	/* background: url(../images/gg10.png) right center no-repeat; */
 	font-size: 20px;
 	color: #4e4294;
 	line-height: 52px;
 	height: 52px;
 	float: left;
 	font-weight: bold;
-	padding: 0 40px 0 10px;
+	padding: 0 40px 0 0px;
 }
 .layoutr-title select {
 	float: right;
-	margin: 13px 10px 0 0;
+	margin: 10px 0px 0 0;
 }
 .layoutrmain_font {
 	border-bottom: 1px solid #f0f0f0;
@@ -156,8 +162,8 @@ body,html {
 	font-size: 16px;
 }
 .layoutdt-box {
-	margin-top: 8px;
-	box-shadow: 1px 1px 1px #C9C9C9;
+	margin-top: 5px;
+	/* box-shadow: 1px 1px 1px #C9C9C9; */
 	overflow: hidden;
 }
 .layoutdt-box img {
@@ -179,8 +185,8 @@ body,html {
 	width: 117px;
 }
 .layout-l3 {
-	margin-top: 8px;
-	box-shadow: 1px 1px 1px #C9C9C9;
+	margin-top: 5px;
+	/* box-shadow: 1px 1px 1px #C9C9C9; */
 	overflow: hidden;
 	list-style: none;
 	background: #fff;
@@ -200,8 +206,8 @@ body,html {
 	border-bottom-color: #f0851a;
 }
 .layout-last {
-	margin-top: 8px;
-	box-shadow: 1px 1px 1px #C9C9C9;
+	margin-top: 5px;
+	/* box-shadow: 1px 1px 1px #C9C9C9; */
 	overflow: hidden;
 	list-style: none;
 	background: #fff;
@@ -249,6 +255,7 @@ body,html {
 
 td {
 	text-align: center;
+	
 }
 
 .layoutr-content table {
@@ -257,11 +264,11 @@ td {
 
 .layoutr-content tr {
 	height: 40px;
+	font-size:14px;
 }
 
 .box1 th {
 	background-color: #f2f2f2;
-
 	border-color: #f2f2f2;
 
 }
@@ -295,8 +302,8 @@ td {
 }
 
 .choice－center .target > select{
-	height:30px;
-	padding: 8px 12px;
+	height:33px;
+	padding: 4px 12px;
 	font-size: 14px;
 	color: #555;
 	background-color: #ececec;
@@ -327,8 +334,8 @@ td {
 }
 .choice－center .custom > div > select{
 	width:100px;
-	height:30px;
-	padding: 8px 12px;
+	height:33px;
+	padding: 4px 12px;
 	font-size: 14px;
 	color: #555;
 	background-color: #ececec;
@@ -596,13 +603,13 @@ input[type="radio"] + label {
 	min-height: 830px;
 	background: #fff;
 	padding: 0 35px;
-	box-shadow: 1px 1px 1px #C9C9C9;
+	/* box-shadow: 1px 1px 1px #C9C9C9; */
 }
 
 .layout-right .layoutr-title > select{
 	width: 140px;
-	height: 30px;
-	padding: 8px 12px;
+	height: 33px;
+	padding: 4px 12px;
 	font-size: 14px;
 	color: #555;
 	background-color: #ececec;
