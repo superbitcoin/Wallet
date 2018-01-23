@@ -40,7 +40,7 @@ class ActionsPlugin(object):
         def hideIcon():
             icon.die()
         icon.items = [
-            (_["Report Bugs"], lambda: self.opensite("https://github.com/superbitcoin/SuperBitcoin/issues")),
+            (_["Report Bugs"], lambda: self.opensite("https://github.com/superbitcoin/Wallet/issues")),
             "--",
             (_["SBTC Twitter"], lambda: self.opensite("https://twitter.com/SuperBTC2")),
             # (_["SBTC Reddit"], lambda: self.opensite("http://www.reddit.com/r/zeronet/")),

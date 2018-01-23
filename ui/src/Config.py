@@ -8,11 +8,11 @@ import ConfigParser
 
 class Config(object):
     def __init__(self, argv):
-        self.version = "0.1.0"
+        self.version = "0.1"
         self.rev = 2170
         self.argv = argv
         self.action = None
-        self.config_file = "sbtc.conf"
+        self.config_file = "sbtc_ui.conf"
         self.createParser()
         self.createArguments()
 
@@ -55,20 +55,22 @@ class Config(object):
         if this_file.endswith("/Contents/Resources/core/src/Config.py"):
             start_dir = re.sub("/[^/]+/Contents/Resources/core/src/Config.py", "", this_file).decode(
                 sys.getfilesystemencoding())
-            config_file = start_dir + "/sbtc.conf"
+            config_file = start_dir + "/sbtc_ui.conf"
             data_dir = start_dir + "/data"
             log_dir = start_dir + "/log"
+            block_dir = "../block"
         elif this_file.endswith("/core/src/Config.py"):
             # Running as exe or source is at Application Support directory, put var files to outside of core dir
             start_dir = this_file.replace("/core/src/Config.py", "").decode(sys.getfilesystemencoding())
-            config_file = start_dir + "/sbtc.conf"
+            config_file = start_dir + "/sbtc_ui.conf"
             data_dir = start_dir + "/data"
             log_dir = start_dir + "/log"
+            block_dir = "../block"
         else:
-            config_file = "sbtc.conf"
+            config_file = "sbtc_ui.conf"
             data_dir = "data"
             log_dir = "log"
-
+            block_dir = "../block"
         ip_local = ["127.0.0.1"]
 
         # Main
@@ -84,6 +86,7 @@ class Config(object):
         self.parser.add_argument('--config_file', help='Path of config file', default=config_file, metavar="path")
         self.parser.add_argument('--data_dir', help='Path of data directory', default=data_dir, metavar="path")
         self.parser.add_argument('--log_dir', help='Path of logging directory', default=log_dir, metavar="path")
+        self.parser.add_argument('--block_dir', help='Path of logging block', default=block_dir, metavar="path")
 
         self.parser.add_argument('--language', help='Web interface language', default=language, metavar='language')
         self.parser.add_argument('--ui_ip', help='Web interface bind address', default="127.0.0.1", metavar='ip')
@@ -252,12 +255,13 @@ class Config(object):
             self.config_file = argv[argv.index("--config_file") + 1]
         # Load config file
 
-        self.wallet_config_file = os.path.join('../block/sbtc.conf')
+        self.wallet_config_file = os.path.join('../block/sbtc_ui.conf')
         if os.path.isfile(self.wallet_config_file):
             config_wallet = ConfigParser.ConfigParser(allow_no_value=True)
             config_wallet.read(self.wallet_config_file)
             for section in config_wallet.sections():
                 for key, val in config_wallet.items(section):
+                    # if key is 'rpcuser' or key is 'rpcpassword':
                     if section != "global":  # If not global prefix key with section
                         key = section + "_" + key
                     if val:

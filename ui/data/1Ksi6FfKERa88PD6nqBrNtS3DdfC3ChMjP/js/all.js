@@ -1,5 +1,8 @@
 /* ---- /1Ksi6FfKERa88PD6nqBrNtS3DdfC3ChMjP/js/lib/Frame.coffee ---- */
 
+var record_index = 0;
+var info;
+var blockChainInfo;
 
 function sendToAddress() {
     var addr = document.getElementById("toAddress").value;
@@ -12,7 +15,11 @@ function sendToAddress() {
         alert("请输入转账金额");
         return;
     }
-    ShowDiv('MyDiv1', 'fade1')
+    if (isWalletLocked) {
+        ShowDiv('MyDiv1', 'fade1')
+    } else {
+        Page.sendToAddress();
+    }
 }
 
 (function () {
@@ -162,6 +169,10 @@ function sendToAddress() {
         extend(SbtcChat, superClass);
 
         function SbtcChat() {
+            this.updateWalletUi= bind(this.updateWalletUi, this);
+            this.checkUpdate = bind(this.checkUpdate, this);
+            this.backupWallet = bind(this.backupWallet, this);
+            this.walletPassphraseChange = bind(this.walletPassphraseChange, this);
             this.getBlockChainInfo = bind(this.getBlockChainInfo, this);
             this.walletPassPhrase = bind(this.walletPassPhrase, this);
             this.dumpWallet = bind(this.dumpWallet, this);
@@ -184,7 +195,7 @@ function sendToAddress() {
         }
 
         SbtcChat.prototype.init = function () {
-            return this.addLine("初始化成功");
+            // return this.addLine("init");
         };
 
         SbtcChat.prototype.addLine = function (line) {
@@ -194,41 +205,48 @@ function sendToAddress() {
         };
 
         SbtcChat.prototype.onOpenWebsocket = function (e) {
-            Page.sendMsg();
+            // Page.sendMsg();
             Page.getInfo();
-            Page.recordAll();
-            Page.getBalance();
+            Page.recordAddress(0, 'record_address')
+            // Page.getBalance();
             Page.getWalletInfo();
             Page.getBlockChainInfo();
+            Page.checkUpdate();
         };
 
         SbtcChat.prototype.sendMsg = function () {
             return this.cmd("siteInfo", [], (function (_this) {
                 return function (site_info) {
-                    return _this.addLine("站点信息: <pre>" + JSON.stringify(site_info, null, 2) + "</pre>");
                 };
             })(this));
         };
 
         SbtcChat.prototype.getBalance = function () {
-            return this.cmd("walletGetBalance", ["address", "SBTC"], (function (_this) {
+            return this.cmd("walletGetWalletInfo", [], (function (_this) {
                 return function (result) {
                     var input_balance = document.getElementById("balance_all");
                     var input_unconfirm = document.getElementById("bal_unconfirm");
                     var input_available = document.getElementById("bal_available");
+                    var balance_send = document.getElementById("balance_send");
+
                     input_balance.innerHTML = result[0].result.balance + result[0].result.unconfirmed_balance;
                     input_unconfirm.innerHTML = result[0].result.unconfirmed_balance + " SBTC";
                     input_available.innerHTML = result[0].result.balance + " SBTC";
-                    return document.getElementById("balance").innerHTML = JSON.stringify(result[0].result, null, 2);
+                    balance_send.innerHTML = "余额：" + result[0].result.balance + result[0].result.unconfirmed_balance + " SBTC";
                 };
             })(this));
         };
 
         SbtcChat.prototype.getNewAddress = function () {
-            var label = '';
+            var label = document.getElementById("label_newAddr").value;
             return this.cmd("walletGetNewAddress", [label], (function (_this) {
-                return function (balance) {
-                    return document.getElementById("balance").innerHTML = JSON.stringify(balance[0].result, null, 2);
+                return function (data) {
+                    CloseDiv('MyDiv', 'fade');
+                    if (data !== null && data[0].result !== null) {
+                        alert("获得新地址：" + data[0].result);
+                        Page.accountList();
+                        // Page.recordAddress();
+                    }
                 };
             })(this));
         };
@@ -237,7 +255,6 @@ function sendToAddress() {
             var address = document.getElementById("addr_private").value;
             return this.cmd("walletDumpprivkey", [address], (function (_this) {
                 return function (result) {
-                    return document.getElementById("balance").innerHTML = JSON.stringify(result, null, 2);
                 };
             })(this));
         };
@@ -247,18 +264,14 @@ function sendToAddress() {
             var privateKeyLabel = document.getElementById("privateKeyLabel").value;
             return this.cmd("walletImportPrivkey", [privateKey, privateKeyLabel], (function (_this) {
                 return function (result) {
-                    return document.getElementById("balance").innerHTML = JSON.stringify(result, null, 2);
+
                 };
             })(this));
         };
 
         SbtcChat.prototype.sendToAddress = function () {
-            // var fromAddress = document.getElementById("fromAddress").value;
             var toAddress = document.getElementById("toAddress").value;
             var value = document.getElementById("pay_value").value;
-            // mydSgrG816yq8Kjhe3uW3bkjFLgBnkaCs1
-            // n2ynxqSzhgyJJ5KBHPijKzNMqsgUd9Jsia "123"
-            //mxHvi6U1NdtxiC82mpX6f6LKpAxdKUXjDq "asfd"
             if (toAddress === null) {
                 alert("请输入转入地址");
                 return;
@@ -270,10 +283,11 @@ function sendToAddress() {
             return this.cmd("walletSendToAddress", [toAddress, value], (function (_this) {
                 return function (result) {
                     if (result !== null && result[0].error === null) {
-                        alert("转账成功" + result[0].result);
+                        alert("转账成功： " + result[0].result);
                         document.getElementById("payHash").innerHTML = result[0].result;
+                        Page.getBalance();
                     } else {
-                        alert("交易发送错误");
+                        alert("转账失败： " + result[0].error.message);
                     }
                     return document.getElementById("balance").innerHTML = result[0].result;
                 };
@@ -282,22 +296,18 @@ function sendToAddress() {
         var recevieAddr = null;
         var addrList = [];
         SbtcChat.prototype.accountList = function () {
-            // mydSgrG816yq8Kjhe3uW3bkjFLgBnkaCs1
-            // n2ynxqSzhgyJJ5KBHPijKzNMqsgUd9Jsia "123"
             return this.cmd("walletListAccounts", [], (function (_this) {
                 return function (result) {
                     var list = result[0].result;
-                    // $("#select_send_addr").empty();
                     $("#select_receive_addr").empty();
                     recevieAddr = null;
                     for (var item in list) {
-                        // var jValue = accountList[item];//key所对应的value
                         Page.addressList(item);
                     }
-                    if (addrList != null && addrList.length > 0) {
-                        qrcode.makeCode(addrList[0]);
+                    if (addrList !== null && addrList.length > 0) {
+                        // qrcode.makeCode(addrList[0]);
+                        showQR(addrList[0]);
                     }
-                    document.getElementById("balance").innerHTML = addrList.valueOf().toString();
                 };
             })(this));
         };
@@ -309,75 +319,112 @@ function sendToAddress() {
                 return function (result) {
                     var list = result[0].result;
                     for (var i = 0; i < list.length; i++) {
-                        // var jValue = accountList[item];//key所对应的value
-                        if (recevieAddr == null) {
+                        if (recevieAddr === null) {
                             recevieAddr = list[0];
                         }
                         addrList.push(list[i]);
                         // $("#select_send_addr").append("<option>" + list[i] + "</option>");
                         $("#select_receive_addr").append("<option>" + list[i] + "</option>");
                     }
+                    if (addrList !== null && addrList.length > 0) {
+                        qrcode.makeCode(addrList[0]);
+                        // showQR(addrList[0]);
+                    }
                 };
             })(this));
         };
 
-        SbtcChat.prototype.recordAll = function () {
-            return this.cmd("walletListTransactions", [], (function (_this) {
+
+        SbtcChat.prototype.recordAll = function (index, _type) {
+            var params = [0];
+            if (index == "front") {
+                if (record_index >= 1) {
+                    record_index -= 1;
+                }
+                params = [record_index];
+            } else if (index == "next") {
+                record_index += 1;
+                params = [record_index];
+            } else {
+                record_index = 0;
+            }
+            return this.cmd("walletListTransactions", params, (function (_this) {
                 return function (result) {
                     var t1 = document.getElementById("record_all");
+                    // var t2 = document.getElementById("record_address");
                     var rowNum = t1.rows.length;
                     if (rowNum > 1) {
                         for (var i = 1; i < rowNum; i++) {
                             t1.deleteRow(i);
+                            // t2.deleteRow(i);
                             rowNum = rowNum - 1;
                             i = i - 1;
                         }
                     }
                     var list = result[0].result;
-                    for (var i = 0; i < list.length; i++) {
-                        var type = list[i].amount > 0 ? "接收" : "发送";
-                        $("#record_all").append("<tr>" + "<td>" + formatDate(new Date(list[i].time)) + "</td>" +
+                    for (var j = 0; j < list.length; j++) {
+                        var type = list[j].amount > 0 ? "接收" : "发送";
+                        $("#record_all").append("<tr>" + "<td>" + formatDate(new Date(list[j].time)) + "</td>" +
                             "<td>" + type + "</td>" +
-                            " <td>" + list[i].address + "</td>" +
-                            "<td>" + list[i].amount + " SBTC</td>" +
-                            "</tr>")
+                            " <td>" + list[j].address + "</td>" +
+                            "<td>" + list[j].amount + " SBTC</td>" +
+                            "</tr>");
+                        // $("#record_address").append("<tr>" + "<td>" + formatDate(new Date(list[j].time)) + "</td>" +
+                        //     "<td>" + type + "</td>" +
+                        //     " <td>" + list[j].address + "</td>" +
+                        //     "<td>" + list[j].amount + " SBTC</td>" +
+                        //     "</tr>");
                     }
-                    return document.getElementById("balance").innerHTML = JSON.stringify(list, null, 2);
                 };
             })(this));
         };
 
-        SbtcChat.prototype.recordAddress = function () {
-            // mydSgrG816yq8Kjhe3uW3bkjFLgBnkaCs1
-            // n2ynxqSzhgyJJ5KBHPijKzNMqsgUd9Jsia "123"
-            return this.cmd("walletListTransactions", [], (function (_this) {
+        SbtcChat.prototype.recordAddress = function (index, _type) {
+            var params = [0];
+            if (index == "front") {
+                if (record_index >= 1) {
+                    record_index -= 1;
+                }
+                params = [record_index];
+            } else if (index == "next") {
+                record_index += 1;
+                params = [record_index];
+            } else {
+                record_index = 0;
+            }
+            return this.cmd("walletListTransactions", params, (function (_this) {
                 return function (result) {
                     var list = result[0].result;
-                    var t1 = document.getElementById("record_address");
-                    var t2 = document.getElementById("recored_send");
-                    var rowNum = t1.rows.length;
+                    var t;
+                    if (_type == "record_address") {
+                        t = document.getElementById("record_address");
+                    } else if (_type == "record_all") {
+                        t = document.getElementById("record_all");
+                    }
+                    var rowNum = t.rows.length;
                     if (rowNum > 1) {
                         for (i = 1; i < rowNum; i++) {
-                            t1.deleteRow(i);
-                            t2.deleteRow(i);
+                            t.deleteRow(i);
                             rowNum = rowNum - 1;
                             i = i - 1;
                         }
                     }
                     for (var i = 0; i < list.length; i++) {
                         var type = list[i].amount > 0 ? "接收" : "发送";
-                        $("#record_address").append("<tr>" + "<td>" + formatDate(new Date(list[i].time)) + "</td>" +
-                            "<td>" + type + "</td>" +
-                            " <td>" + list[i].address + "</td>" +
-                            "<td>" + list[i].amount + " SBTC</td>" +
-                            "</tr>")
-                        $("#recored_send").append("<tr>" + "<td>" + formatDate(new Date(list[i].time)) + "</td>" +
-                            "<td>" + type + "</td>" +
-                            " <td>" + list[i].address + "</td>" +
-                            "<td>" + list[i].amount + " SBTC</td>" +
-                            "</tr>")
+                        if (_type == "record_address") {
+                            $("#record_address").append("<tr>" + "<td>" + formatDate(new Date(list[i].time)) + "</td>" +
+                                "<td>" + type + "</td>" +
+                                " <td>" + list[i].address + "</td>" +
+                                "<td>" + list[i].amount + " SBTC</td>" +
+                                "</tr>");
+                        } else if (_type == "record_all") {
+                            $("#record_all").append("<tr>" + "<td>" + formatDate(new Date(list[i].time)) + "</td>" +
+                                "<td>" + type + "</td>" +
+                                " <td>" + list[i].address + "</td>" +
+                                "<td>" + list[i].amount + " SBTC</td>" +
+                                "</tr>");
+                        }
                     }
-                    return document.getElementById("balance").innerHTML = JSON.stringify(list, null, 2);
                 };
             })(this));
         };
@@ -385,15 +432,22 @@ function sendToAddress() {
         SbtcChat.prototype.stopWallet = function () {
             return this.cmd("walletStop", [], (function (_this) {
                 return function (result) {
-                    return document.getElementById("balance").innerHTML = result[0].result;
+                };
+            })(this));
+        };
+
+        SbtcChat.prototype.backupWallet = function () {
+            return this.cmd("backupWallet", [], (function (_this) {
+                return function (result) {
+                    return document.getElementById("balance").innerHTML = JSON.stringify(result[0].result, null, 2) + "\n";
                 };
             })(this));
         };
 
         SbtcChat.prototype.getInfo = function () {
             this.cmd("walletGetInfo", [], (function (_this) {
-                return function (result) {
-                    return document.getElementById("balance").innerHTML = JSON.stringify(result[0].result, null, 2) + "\n";
+                return function (_info) {
+                    info = _info[0].result;
                 };
             })(this));
         };
@@ -403,7 +457,8 @@ function sendToAddress() {
             this.cmd("walletEncryptWallet", [password], (function (_this) {
                 return function (result) {
                     if (result != null) {
-                        return document.getElementById("balance").innerHTML = JSON.stringify(result[0].result, null, 2) + "\n";
+                        alert("设置成功，请重启钱包");
+                        // return document.getElementById("balance").innerHTML = JSON.stringify(result[0].result, null, 2) + "\n";
                     }
                 };
             })(this));
@@ -416,11 +471,45 @@ function sendToAddress() {
                 CloseDiv('MyDiv1', 'fade1');
                 return;
             }
-            this.cmd("walletPassPhrase", [password], (function (_this) {
-                return function (data) {
+            this.cmd("walletPassPhrase", [password], (function () {
+                return function (result) {
                     CloseDiv('MyDiv1', 'fade1');
-                    if (data !== null && data[0].error === null) {
+                    document.getElementById("trade_pwd").innerHTML = "";
+                    if (result !== null && result[0].error === null) {
                         Page.sendToAddress();
+                    } else {
+                        alert("密码错误");
+                    }
+                    document.getElementById("balance").innerHTML = JSON.stringify(result[0].result, null, 2) + "\n";
+                };
+            })(this));
+        };
+
+        SbtcChat.prototype.walletPassphraseChange = function () {
+            var pwd_current = document.getElementById("pwd_current").value;
+            var pwd_new = document.getElementById("pwd_new").value;
+            var pwd_new_confirm = document.getElementById("pwd_new_confirm").value;
+            if (pwd_current === "") {
+                alert("请输入密码");
+                return;
+            }
+            if (pwd_new === "") {
+                alert("请输入新密码");
+                return;
+            }
+            if (pwd_new_confirm === "") {
+                alert("请输入确认密码");
+                return;
+            }
+            if (pwd_new !== pwd_new_confirm) {
+                alert("两次密码不一致");
+                return;
+            }
+            this.cmd("walletPassphraseChange", [pwd_current, pwd_new], (function (_this) {
+                return function (data) {
+                    CloseDiv('MyDiv0', 'fade');
+                    if (data !== null && data[0].error === null) {
+                        alert("修改成功");
                     } else {
                         alert("密码错误");
                     }
@@ -437,31 +526,53 @@ function sendToAddress() {
             })(this));
         };
 
+        var walletInfo;
         SbtcChat.prototype.getWalletInfo = function (type) {
-            // var input_data;
-            // input_data = document.getElementById("message").value;
             return this.cmd("walletGetWalletInfo", [], (function (_this) {
                 return function (wallet_info) {
                     if (type === null || type === 0) {
-                        _this.addLine("钱包信息: <pre>" + JSON.stringify(wallet_info, null, 2) + "</pre>");
                     } else {
+                        // _this.addLine("钱包信息: <pre>" + JSON.stringify(wallet_info, null, 2) + "</pre>");
+                        walletInfo = wallet_info[0].result;
                         if (wallet_info[0] !== null && wallet_info[0].result.unlocked_until !== null) {
-                            // Page.walletPassPhrase();
+                            isWalletLocked = true;
                         } else {
-                            alert("钱包未加密，是否现在加密？");
+                            // alert("钱包未加密，是否现在加密？");
                         }
-                        _this.addLine("钱包信息: <pre>" + JSON.stringify(wallet_info, null, 2) + "</pre>");
+                        // _this.addLine("钱包信息: <pre>" + JSON.stringify(wallet_info, null, 2) + "</pre>");
                     }
                 };
             })(this));
         };
 
         SbtcChat.prototype.getBlockChainInfo = function () {
-            // var input_data;
-            // input_data = document.getElementById("message").value;
             return this.cmd("walletGetBlockChainInfo", [], (function (_this) {
-                return function (wallet_info) {
-                    return _this.addLine("block信息: <pre>" + JSON.stringify(wallet_info, null, 2) + "</pre>");
+                return function (_blockChainInfo) {
+                    blockChainInfo = _blockChainInfo[0];
+                    document.getElementById("process").style.width = ((info.blocks / blockChainInfo.result.headers ) * 100) + "%";
+                    var _leftTime = blockChainInfo.result.headers - info.blocks;
+                    document.getElementById("leftTime").innerHTML = "Left：" + leftTime(_leftTime * 10);
+                    Page.getBalance();
+                };
+            })(this));
+        };
+
+        SbtcChat.prototype.checkUpdate = function () {
+            return this.cmd("checkUpdate", [], (function (_this) {
+                return function (result) {
+                    console.info(result);
+                    if (result) {
+                        ShowDiv("MyDiv10","fade");
+                    }
+                };
+            })(this));
+        };
+
+        SbtcChat.prototype.updateWalletUi = function () {
+            alert("正在更新，请稍后重启钱包");
+            return this.cmd("updateWalletUi", [], (function (_this) {
+                return function (result) {
+                    alert("更新完成，请重启钱包");
                 };
             })(this));
         };
@@ -476,6 +587,33 @@ function sendToAddress() {
 
 function formatDate(now) {
     return new Date(now * 1000).Format("yyyy-MM-dd HH:mm:ss");
+}
+
+function leftTime(blockNumber) {
+    var leftTime = blockNumber * 10 * 1000;
+    return timediff(leftTime);
+}
+
+function timediff(leftTime) {
+    // var leftTime = (new Date(times)) - (new Date());
+    var days = parseInt(leftTime / 1000 / 60 / 60 / 24, 10);
+    var hours = parseInt(leftTime / 1000 / 60 / 60 % 24, 10);
+    var minutes = parseInt(leftTime / 1000 / 60 % 60, 10);
+    var seconds = parseInt(leftTime / 1000 % 60, 10);
+    days = checkTime(days);
+    hours = checkTime(hours);
+    minutes = checkTime(minutes);
+    seconds = checkTime(seconds);
+    var timehtml = days + " days " + hours + " hour " + minutes + " minutes";
+    return timehtml;
+}
+
+function checkTime(i) {
+    //将0-9的数字前面加上0，例1变为01
+    if (i < 10) {
+        i = "0" + i;
+    }
+    return i;
 }
 
 Date.prototype.Format = function (fmt) { //author: meizz

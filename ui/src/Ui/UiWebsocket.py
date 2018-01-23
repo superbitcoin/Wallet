@@ -274,15 +274,15 @@ class UiWebsocket(object):
     # - Actions -
 
     # Do callback on response {"cmd": "response", "to": message_id, "result": result}
-    def actionResponse(self, to, result):
-        if to in self.waiting_cb:
-            self.waiting_cb[to](result)  # Call callback function
-        else:
-            self.log.error("Websocket callback not found: %s, %s" % (to, result))
+    # def actionResponse(self, to, result):
+    #     if to in self.waiting_cb:
+    #         self.waiting_cb[to](result)  # Call callback function
+    #     else:
+    #         self.log.error("Websocket callback not found: %s, %s" % (to, result))
 
     # Send a simple pong answer
-    def actionPing(self, to):
-        self.response(to, "pong")
+    # def actionPing(self, to):
+    #     self.response(to, "pong")
 
     # Send site details
     def actionSiteInfo(self, to, file_status=None):
@@ -293,141 +293,11 @@ class UiWebsocket(object):
                 ret["event"] = ("file_done", file_status)
         self.response(to, ret)
 
-    # Join to an event channel
-    def actionChannelJoin(self, to, channel):
-        if channel not in self.channels:
-            self.channels.append(channel)
-
     # Server variables
     def actionServerInfo(self, to):
         # print("actionServerInfo")
         ret = self.formatServerInfo()
         self.response(to, ret)
-
-    # Sign content.json
-    # def actionSiteSign(self, to, privatekey=None, inner_path="content.json", response_ok=True,
-    #                    update_changed_files=False, remove_missing_optional=False):
-    #     self.log.debug("Signing: %s" % inner_path)
-    #     site = self.site
-    #     extend = {}  # Extended info for signing
-    #
-    #     # Change to the file's content.json
-    #     file_info = site.content_manager.getFileInfo(inner_path)
-    #     if not inner_path.endswith("content.json"):
-    #         if not file_info:
-    #             raise Exception("Invalid content.json file: %s" % inner_path)
-    #         inner_path = file_info["content_inner_path"]
-    #
-    #     # Add certificate to user files
-    #     if file_info and "cert_signers" in file_info and privatekey is None:
-    #         cert = self.user.getCert(self.site.address)
-    #         extend["cert_auth_type"] = cert["auth_type"]
-    #         extend["cert_user_id"] = self.user.getCertUserId(site.address)
-    #         extend["cert_sign"] = cert["cert_sign"]
-    #
-    #     if (
-    #                 not site.settings["own"] and
-    #                     self.user.getAuthAddress(self.site.address) not in self.site.content_manager.getValidSigners(
-    #                     inner_path)
-    #     ):
-    #         self.log.error("SiteSign error: you don't own this site & site owner doesn't allow you to do so.")
-    #         return self.response(to, {"error": "Forbidden, you can only modify your own sites"})
-    #
-    #     if privatekey == "stored":  # Get privatekey from sites.json
-    #         privatekey = self.user.getSiteData(self.site.address).get("privatekey")
-    #     if not privatekey:  # Get privatekey from users.json auth_address
-    #         privatekey = self.user.getAuthPrivatekey(self.site.address)
-    #
-    #     # Signing
-    #     # Reload content.json, ignore errors to make it up-to-date
-    #     site.content_manager.loadContent(inner_path, add_bad_files=False, force=True)
-    #     # Sign using private key sent by user
-    #     try:
-    #         signed = site.content_manager.sign(inner_path, privatekey, extend=extend,
-    #                                            update_changed_files=update_changed_files,
-    #                                            remove_missing_optional=remove_missing_optional)
-    #     except Exception, err:
-    #         self.cmd("notification", ["error", _["Content signing failed"] + "<br><small>%s</small>" % err])
-    #         self.response(to, {"error": "Site sign failed: %s" % err})
-    #         return
-    #
-    #     site.content_manager.loadContent(inner_path, add_bad_files=False)  # Load new content.json, ignore errors
-    #
-    #     if update_changed_files:
-    #         self.site.updateWebsocket(file_done=inner_path)
-    #
-    #     if response_ok:
-    #         self.response(to, "ok")
-    #
-    #     return inner_path
-
-    # Sign and publish content.json
-    # def actionSitePublish(self, to, privatekey=None, inner_path="content.json", sign=True):
-    #     if sign:
-    #         inner_path = self.actionSiteSign(to, privatekey, inner_path, response_ok=False)
-    #         if not inner_path:
-    #             return
-    #     # Publishing
-    #     if not self.site.settings["serving"]:  # Enable site if paused
-    #         self.site.settings["serving"] = True
-    #         self.site.saveSettings()
-    #         self.site.announce()
-    #
-    #     if not inner_path in self.site.content_manager.contents:
-    #         return self.response(to, {"error": "File %s not found" % inner_path})
-    #
-    #     event_name = "publish %s %s" % (self.site.address, inner_path)
-    #     called_instantly = RateLimit.isAllowed(event_name, 30)
-    #     thread = RateLimit.callAsync(event_name, 30, self.doSitePublish, self.site,
-    #                                  inner_path)  # Only publish once in 30 seconds
-    #     notification = "linked" not in dir(thread)  # Only display notification on first callback
-    #     thread.linked = True
-    #     if called_instantly:  # Allowed to call instantly
-    #         # At the end callback with request id and thread
-    #         self.cmd("progress", ["publish", _["Content published to {0}/{1} peers."].format(0, 5), 0])
-    #         thread.link(lambda thread: self.cbSitePublish(to, self.site, thread, notification, callback=notification))
-    #     else:
-    #         self.cmd(
-    #             "notification",
-    #             ["info", _["Content publish queued for {0:.0f} seconds."].format(RateLimit.delayLeft(event_name, 30)),
-    #              5000]
-    #         )
-    #         self.response(to, "ok")
-    #         # At the end display notification
-    #         thread.link(lambda thread: self.cbSitePublish(to, self.site, thread, notification, callback=False))
-
-    # Find data in json files
-    # def actionFileQuery(self, to, dir_inner_path, query=None):
-    #     # s = time.time()
-    #     dir_path = self.site.storage.getPath(dir_inner_path)
-    #     rows = list(QueryJson.query(dir_path, query or ""))
-    #     # self.log.debug("FileQuery %s %s done in %s" % (dir_inner_path, query, time.time()-s))
-    #     return self.response(to, rows)
-
-    # List files in directory
-    # def actionFileList(self, to, inner_path):
-    #     return self.response(to, list(self.site.storage.walk(inner_path)))
-
-    # List directories in a directory
-    # def actionDirList(self, to, inner_path):
-    #     return self.response(to, list(self.site.storage.list(inner_path)))
-
-    # - Admin actions -
-
-    # Update site content.json
-    # def actionSiteUpdate(self, to, address, check_files=False, since=None):
-    #     def updateThread():
-    #         site.update(check_files=check_files, since=since)
-    #         self.response(to, "Updated")
-    #
-    #     site = self.server.sites.get(address)
-    #     if not site.settings["serving"]:
-    #         site.settings["serving"] = True
-    #         site.saveSettings()
-    #     if site and (site.address == self.site.address or "ADMIN" in self.site.settings["permissions"]):
-    #         gevent.spawn(updateThread)
-    #     else:
-    #         self.response(to, {"error": "Unknown site: %s" % address})
 
     # def actionServerUpdate(self, to):
     #     self.cmd("updating")
@@ -435,149 +305,115 @@ class UiWebsocket(object):
     #     SiteManager.site_manager.save()
     #     sys.modules["main"].file_server.stop()
     #     sys.modules["main"].ui_server.stop()
-    #
-    # def actionServerPortcheck(self, to):
-    #     sys.modules["main"].file_server.port_opened = None
-    #     res = sys.modules["main"].file_server.openport()
-    #     self.response(to, res)
-    #
-    # def actionServerShowdirectory(self, to, directory="backup"):
-    #     import webbrowser
-    #     webbrowser.open('file://' + os.path.abspath(config.data_dir))
 
-    def actionWalletGetBalance(self, to, address, coinType='ETH'):
-        data = None
-        if coinType == 'ETH':
-            import time
-            address = "0x341bedf95e81d45393d4365f03b317a3af3b97dd"
-            headers = {"Json-Rpc-Tonce": time.time() * 1000}
-            params = "{\"jsonrpc\": \"2.0\", \"method\": \"eth_getBalance\", \"params\": [\"" + address + "\", \"latest\"], \"id\": 1}"
-
-            data = helper.httpPost("127.0.0.1", 8545, params, headers)
-        elif coinType == 'EOS':
-            import httplib
-            headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
-            conn = httplib.HTTPConnection("192.168.1.29", 8888)
-            conn.request("GET", "/v1/chain/get_info", "", headers)
-            response = conn.getresponse()
-            data = response.read()
-            print (data)
-            conn.close()
-        elif coinType == 'SBTC':
-            # print("------actionWalletGetBalance--------")
-            # url = "http://127.0.0.1:18334"
-            # postdata = dict(method='getwalletinfo', id=1)
-            # post = []
-            # post.append(postdata)
-            # req = urllib2.Request(url, json.dumps(post))
-            # req.add_header('Content-Type', 'application/json;charset=utf-8')
-            # auth = base64.b64encode('bitcoin:local321')
-            # req.add_header("Authorization", 'Basic ' + auth)
-            # try:
-            #     response = urllib2.urlopen(req)
-            #     data = json.loads(response.read())
-            # except Exception, err:
-            #     print err.message
-            print("------actionWalletGetBalance--------")
-            postdata = dict(method='getwalletinfo', id=1)
-            data = self.walletRequest(postdata)
+    def actionWalletGetBalance(self, to):
+        print("------actionWalletGetBalance--------")
+        postdata = dict(method='getbalance', id=1)
+        data = self.rpcRequest(postdata)
         return self.response(to, data)
 
     def actionWalletGetInfo(self, to):
         print("------actionWalletGetInfo--------")
         postdata = dict(method='getinfo', params=[], id=1)
-        data = self.walletRequest(postdata)
+        data = self.rpcRequest(postdata)
         return self.response(to, data)
 
     def actionWalletSendToAddress(self, to, toAddr, amount):
         print("------actionWalletSendToAddress--------")
         postdata = dict(method='sendtoaddress', params=[toAddr, amount], id=1)
-        data = self.walletRequest(postdata)
+        data = self.rpcRequest(postdata)
         return self.response(to, data)
 
     def actionWalletGetNewAddress(self, to, label):
         print("------actionGetNewAddress--------")
         postdata = dict(method='getnewaddress', params=[label], id=1)
-        data = self.walletRequest(postdata)
+        data = self.rpcRequest(postdata)
         return self.response(to, data)
 
     # 导出私钥 address:地址
     def actionWalletDumpprivkey(self, to, address):
         print("------actionWalletDumpprivkey--------")
         postdata = dict(method='dumpprivkey', params=[address], id=1)
-        data = self.walletRequest(postdata)
+        data = self.rpcRequest(postdata)
         return self.response(to, data)
 
     # 导入私钥 privateKey:私钥明文
     def actionWalletImportPrivkey(self, to, privateKey, label):
         print("------actionWalletImportPrivkey--------")
         postdata = dict(method='importprivkey', params=[privateKey, label], id=1)
-        data = self.walletRequest(postdata)
+        data = self.rpcRequest(postdata)
         return self.response(to, data)
 
     def actionWalletListAccounts(self, to):
         print("------actionWalletListAccounts--------")
         postdata = dict(method='listaccounts', params=[], id=1)
-        data = self.walletRequest(postdata)
+        data = self.rpcRequest(postdata)
         return self.response(to, data)
 
-    def actionWalletListTransactions(self, to):
+    def actionWalletListTransactions(self, to, index):
         print("------actionListTransactions--------")
-        postdata = dict(method='listtransactions', params=[], id=1)
-        data = self.walletRequest(postdata)
+        postdata = dict(method='listtransactions', params=["*", 10, 10 * index], id=1)
+        data = self.rpcRequest(postdata)
         return self.response(to, data)
 
     def actionWalletGetAddressesListByAccount(self, to, label):
         print("------actionWalletGetAddressesListByAccount--------")
         postdata = dict(method='getaddressesbyaccount', params=[label], id=1)
-        data = self.walletRequest(postdata)
+        data = self.rpcRequest(postdata)
         return self.response(to, data)
 
     def actionWalletGetBlockChainInfo(self, to):
         print("------actionWalletGetBlockChainInfo--------")
         postdata = dict(method='getblockchaininfo', id=1)
-        data = self.walletRequest(postdata)
+        data = self.rpcRequest(postdata)
         return self.response(to, data)
 
     def actionWalletGetWalletInfo(self, to):
         print("------actionWalletGetWalletInfo--------")
         postdata = dict(method='getwalletinfo', id=1)
-        data = self.walletRequest(postdata)
+        data = self.rpcRequest(postdata)
         return self.response(to, data)
 
     def actionWalletEncryptWallet(self, to, password):
         print("------actionWalletEncryptWallet--------")
         postdata = dict(method='encryptwallet', params=[password], id=1)
-        data = self.walletRequest(postdata)
+        data = self.rpcRequest(postdata)
+        return self.response(to, data)
+
+    def actionWalletPassphraseChange(self, to, pwd_now, pwd_new):
+        print("------actionWalletPassphraseChange--------")
+        postdata = dict(method='walletpassphrasechange', params=[pwd_now, pwd_new], id=1)
+        data = self.rpcRequest(postdata)
         return self.response(to, data)
 
     def actionWalletDumpWallet(self, to, password):
         print("------actionWalletDumpWallet--------")
         postdata = dict(method='dumpwallet', params=[password], id=1)
-        data = self.walletRequest(postdata)
+        data = self.rpcRequest(postdata)
         return self.response(to, data)
 
     def actionWalletPassPhrase(self, to, password):
         print("------actionWalletPassPhrase--------")
-        # url = "http://127.0.0.1:18334"
-        postdata = dict(method='walletpassphrase', params=[password, 5], id=1)
-        data = self.walletRequest(postdata)
+        postdata = dict(method='walletpassphrase', params=[password, 50], id=1)
+        data = self.rpcRequest(postdata)
         return self.response(to, data)
 
     def actionWalletStop(self, to):
         print("------actoinWalletStop--------")
         postdata = dict(method='stop', id=1)
-        data = self.walletRequest(postdata)
+        data = self.rpcRequest(postdata)
         return self.response(to, data)
 
-    def walletRequest(self, postdata):
+    def rpcRequest(self, postdata):
         data = None
         url = "http://127.0.0.1:18334"
         post = []
         post.append(postdata)
         req = urllib2.Request(url, json.dumps(post))
         req.add_header('Content-Type', 'application/json;charset=utf-8')
-        auth = base64.b64encode('bitcoin:local321')
+        # auth = base64.b64encode('bitcoin:local321')
+        print(config.rpcuser + ':' + config.rpcpassword)
+        auth = base64.b64encode(config.rpcuser + ':' + config.rpcpassword)
         req.add_header("Authorization", 'Basic ' + auth)
         try:
             response = urllib2.urlopen(req)
@@ -586,3 +422,39 @@ class UiWebsocket(object):
             print err.message
         print(data)
         return data
+
+    def actionBackupWallet(self, to):
+        print('--------actionBackupWallet--------')
+        import os
+        file_path = os.path.abspath(__file__)
+        if file_path.endswith('wallet\\ui\\src\\Ui\\UiWebsocket.py'):
+            block_path = file_path.replace('ui\\src\\Ui\\UiWebsocket.py', 'block')
+            os.startfile(block_path)
+
+    def actionCheckUpdate(self, to):
+        import httplib
+        headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
+        conn = httplib.HTTPConnection("47.104.14.35")
+        conn.request("GET", "", "", headers)
+        response = conn.getresponse()
+        data = response.read()
+        print (data)
+        strs = data.split('=')
+        print (float(strs[1]))
+        ver = float(strs[1])
+        needUpdate = False
+        if ver > float(config.version):
+            needUpdate = True
+        # print(strs[1])
+        # print(float(strs[1]) > float(config.version))
+        print (data)
+        return self.response(to, needUpdate)
+
+    def actionUpdateWalletUi(self, to):
+        import update
+        try:
+            update.update()
+        except Exception, err:
+            print "Update error: %s" % err
+        # import atexit
+        # atexit._run_exitfuncs()

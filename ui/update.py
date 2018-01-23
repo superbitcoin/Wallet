@@ -9,9 +9,9 @@ def download():
     from src.util import helper
 
     urls = [
-        "https://github.com/Zzitao/wallet_explorer/archive/master.zip",
-        "https://gitlab.com/Zzitao/wallet_explorer/repository/archive.zip?ref=master",
-        "https://try.gogs.io/Zzitao/wallet_explorer/archive/master.zip"
+        "https://github.com/superbitcoin/WalletUI/archive/master.zip",
+        "https://github.com/superbitcoin/WalletUI/repository/archive.zip?ref=master",
+        "https://github.com/superbitcoin/WalletUI/archive/master.zip"
     ]
 
     zipdata = None
@@ -45,6 +45,7 @@ def download():
 
 def update():
     from Config import config
+    import sys
     if getattr(sys, 'source_update_dir', False):
         if not os.path.isdir(sys.source_update_dir):
             os.makedirs(sys.source_update_dir)

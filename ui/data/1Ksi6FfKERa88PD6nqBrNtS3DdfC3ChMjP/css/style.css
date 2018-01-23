@@ -38,6 +38,7 @@ body,html {
 	display: block;
 	margin: 0 auto;
 	padding-top: 38px;
+	margin-left:31%;
 }
 .wrapper {
 	width: 1000px;
@@ -226,7 +227,7 @@ body,html {
 .layout-lastbg label {
 	height: 25px;
 	background: #7eff00;
-	width: 30%;
+	width: 0;
 	display: block;
 }
 .layout-last span {
@@ -255,7 +256,7 @@ body,html {
 
 td {
 	text-align: center;
-	
+
 }
 
 .layoutr-content table {
@@ -487,12 +488,10 @@ input[type="radio"] + label {
 }
 
 .receive-center > div {
-	line-height: 60px;
+	line-height: 30px;
 }
 
 .receive-center div > span {
-
-	border: 1px solid #ccc;
 	border-radius: 4px;
 	padding: 8px 16px;
 	font-size: 14px;
@@ -508,8 +507,15 @@ input[type="radio"] + label {
 	border-radius: 5px;
 }
 
+.close{
+
+}
+.close:hover{
+	cursor:pointer;
+}
+
 .btn > input:nth-child(1) {
-	margin: 2% 2% 3% 11%;
+	margin: 2% 2% 3% 0;
 }
 
 .btn > input:nth-child(2) {
@@ -562,20 +568,20 @@ input[type="radio"] + label {
 .white_content p {
 	text-align: center;
 }
-#move {
+.move {
 	text-align: right;
 	cursor: default;
 	height: 40px;
-	line-height: 50px;
+	line-height: 40px;
 }
 
-#move > span {
+.move > span {
 	font-size: 16px;
 	border: 0;
 	padding: 0 14px;
 }
 
-#move > form > p > input {
+.move > form > p > input {
 	width: 50%;
 	border: 1px solid #ccc;
 	border-radius: 4px;
@@ -586,11 +592,12 @@ input[type="radio"] + label {
 	background-image: none;
 }
 
-#move > form > input {
+.move > form > input {
 	border: 1px solid #e97028;
 	border-radius: 4px;
 	padding: 6px 50px;
-	margin-right: 20px;
+	margin-right: 30px;
+	margin-top:10px;
 	font-size: 14px;
 	color: #ffffff;
 	background-color: #e97028;
@@ -624,5 +631,81 @@ input[type="radio"] + label {
 	width: 30px;
 	height: 30px;
 	margin-left: 10px;
-	background: url(images/image_1515334916.342842.jpg)  center no-repeat;
+	background: url(../images/image_1515334916.342842.jpg)  center no-repeat;
+}
+
+.page_next{
+	width: 44px;
+	height: 44px;
+	background: url(../images/next.png)  center no-repeat;
+}
+.page_front{
+	width: 44px;
+	height: 44px;
+	background: url(../images/front.png)  center no-repeat;
+}
+.page_index{
+	width: 44px;
+	height: 44px;
+	background: url(../images/index.png)  center no-repeat;
+}
+
+.page-control .page_front:hover{
+	width: 44px;
+	height: 44px;
+	background: url(../images/front_h.png)  center no-repeat;
+}
+
+.page-control .page_next:hover{
+	width: 44px;
+	height: 44px;
+	background: url(../images/next_h.png)  center no-repeat;
+}
+
+.page-control .page_index:hover{
+	width: 44px;
+	height: 44px;
+	background: url(../images/index_h.png)  center no-repeat;
+}
+
+.page-control{
+	font-size:14px;
+	display: inline-block;
+	float: right;
+}
+
+.page{
+	float:right;
+	text-decoration:none;
+	margin-right:10px;
+}
+.menu_a{
+	color:#fff;font-size:16px;text-decoration:none
+}
+
+.layoutr-pstitle {
+	padding-top: 0px;
+	border-bottom: 2px solid #f18e2a;
+	overflow: hidden;
+}
+.layoutr-pstitle span {
+	/* background: url(../images/gg10.png) right center no-repeat; */
+	font-size: 18px;
+	color: #4e4294;
+	line-height: 40px;
+	height: 40px;
+	float: left;
+	font-weight: bold;
+	margin-left:10px;
+}
+
+.button{
+	border: 1px solid #e97028;
+	border-radius: 4px;
+	padding: 4px 50px;
+	margin: 20px 20px 0 10px;
+	font-size: 14px;
+	color: #ffffff;
+	background-color: #e97028;
+	background-image: none;
 }
