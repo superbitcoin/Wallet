@@ -431,9 +431,10 @@ class UiWebsocket(object):
         print('--------actionBackupWallet--------')
         import os
         file_path = os.path.abspath(__file__)
-        if file_path.endswith('wallet\\ui\\src\\Ui\\UiWebsocket.py'):
+        # block_path = config.block_dir
+        if file_path.endswith('ui\\src\\Ui\\UiWebsocket.py'):
             block_path = file_path.replace('ui\\src\\Ui\\UiWebsocket.py', 'block')
-        elif file_path.endswith('wallet\\ui\\src\\Ui\\UiWebsocket.pyc'):
+        elif file_path.endswith('ui\\src\\Ui\\UiWebsocket.pyc'):
             block_path = file_path.replace('ui\\src\\Ui\\UiWebsocket.pyc', 'block')
         os.startfile(block_path)
 
