@@ -457,7 +457,8 @@ class UiWebsocket(object):
     def actionUpdateWalletUi(self, to):
         import update
         try:
-            update.update()
+            data = update.update()
+            return self.response(to, data)
         except Exception, err:
             print "Update error: %s" % err
             # import atexit
