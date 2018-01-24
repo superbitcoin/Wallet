@@ -470,7 +470,7 @@ function sendToAddress() {
             document.getElementById("pwd_confirm").innerHTML = "";
             document.getElementById("pwd").innerHTML = "";
             this.cmd("walletEncryptWallet", [password], (function (_this) {
-                alert("正在设置密码，请勿刷新");
+                // alert("正在设置密码，请勿刷新");
                 return function (result) {
                     CloseDiv("MyDiv4", "fade");
 
@@ -529,7 +529,7 @@ function sendToAddress() {
             document.getElementById("pwd_new").innerHTML = "";
             document.getElementById("pwd_new").innerHTML = "";
             this.cmd("walletPassphraseChange", [pwd_current, pwd_new], (function (_this) {
-                alert("正在设置密码，请稍等");
+                // alert("正在设置密码，请稍等");
                 return function (data) {
                     CloseDiv('MyDiv0', 'fade');
                     if (data !== null && data[0].error === null) {
