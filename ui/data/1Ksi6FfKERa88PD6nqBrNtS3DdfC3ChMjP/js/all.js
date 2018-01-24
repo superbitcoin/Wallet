@@ -169,7 +169,7 @@ function sendToAddress() {
         extend(SbtcChat, superClass);
 
         function SbtcChat() {
-            this.updateWalletUi= bind(this.updateWalletUi, this);
+            this.updateWalletUi = bind(this.updateWalletUi, this);
             this.checkUpdate = bind(this.checkUpdate, this);
             this.backupWallet = bind(this.backupWallet, this);
             this.walletPassphraseChange = bind(this.walletPassphraseChange, this);
@@ -453,12 +453,32 @@ function sendToAddress() {
         };
         // walletpassphrase
         SbtcChat.prototype.encryptWallet = function () {
-            var password = document.getElementById("_fromAddress").value;
+            var password = document.getElementById("pwd").value;
+            var confirm = document.getElementById("pwd_confirm").value;
+            if (password === "") {
+                alert("请输入密码");
+                return;
+            }
+            if (confirm === "") {
+                alert("请输入确认密码");
+                return;
+            }
+            if (password !== confirm) {
+                alert("两次密码不一致");
+                return;
+            }
+            document.getElementById("pwd_confirm").innerHTML = "";
+            document.getElementById("pwd").innerHTML = "";
             this.cmd("walletEncryptWallet", [password], (function (_this) {
+                alert("正在设置密码，请勿刷新");
                 return function (result) {
+                    CloseDiv("MyDiv4", "fade");
+
                     if (result != null) {
                         alert("设置成功，请重启钱包");
                         // return document.getElementById("balance").innerHTML = JSON.stringify(result[0].result, null, 2) + "\n";
+                    } else {
+                        alert("设置密码失败，请稍后重试");
                     }
                 };
             })(this));
@@ -505,7 +525,11 @@ function sendToAddress() {
                 alert("两次密码不一致");
                 return;
             }
+            document.getElementById("pwd_current").innerHTML = "";
+            document.getElementById("pwd_new").innerHTML = "";
+            document.getElementById("pwd_new").innerHTML = "";
             this.cmd("walletPassphraseChange", [pwd_current, pwd_new], (function (_this) {
+                alert("正在设置密码，请稍等");
                 return function (data) {
                     CloseDiv('MyDiv0', 'fade');
                     if (data !== null && data[0].error === null) {
@@ -513,7 +537,6 @@ function sendToAddress() {
                     } else {
                         alert("密码错误");
                     }
-                    document.getElementById("balance").innerHTML = JSON.stringify(data[0].result, null, 2) + "\n";
                 };
             })(this));
         };
@@ -562,17 +585,20 @@ function sendToAddress() {
                 return function (result) {
                     console.info(result);
                     if (result) {
-                        ShowDiv("MyDiv10","fade");
+                        ShowDiv("MyDiv10", "fade");
                     }
                 };
             })(this));
         };
 
         SbtcChat.prototype.updateWalletUi = function () {
-            alert("正在更新，请稍后重启钱包");
+            alert("正在更新，请稍等");
+            CloseDiv("MyDiv10", "fade");
             return this.cmd("updateWalletUi", [], (function (_this) {
                 return function (result) {
-                    alert("更新完成，请重启钱包");
+                    if (result) {
+                        alert("更新完成，请重启钱包");
+                    }
                 };
             })(this));
         };
