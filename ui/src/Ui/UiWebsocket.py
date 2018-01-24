@@ -407,18 +407,22 @@ class UiWebsocket(object):
     def rpcRequest(self, postdata):
         data = None
         url = "http://127.0.0.1:18334"
+        # url = "http://47.104.14.35:8334"
+        # url = "http://192.168.1.119:18332"
         post = []
         post.append(postdata)
         req = urllib2.Request(url, json.dumps(post))
         req.add_header('Content-Type', 'application/json;charset=utf-8')
         # auth = base64.b64encode('bitcoin:local321')
         print(config.rpcuser + ':' + config.rpcpassword)
+        # auth = base64.b64encode('admin' + ':' + 'morning')
         auth = base64.b64encode(config.rpcuser + ':' + config.rpcpassword)
         req.add_header("Authorization", 'Basic ' + auth)
         try:
             response = urllib2.urlopen(req)
             data = json.loads(response.read())
         except Exception, err:
+            print err
             print err.message
         print(data)
         return data
@@ -427,9 +431,9 @@ class UiWebsocket(object):
         print('--------actionBackupWallet--------')
         import os
         file_path = os.path.abspath(__file__)
-        if file_path.endswith('wallet\\ui\\src\\Ui\\UiWebsocket.py'):
-            block_path = file_path.replace('ui\\src\\Ui\\UiWebsocket.py', 'block')
-            os.startfile(block_path)
+        # if file_path.endswith('wallet\\ui\\src\\Ui\\UiWebsocket.py'):
+        block_path = file_path.replace('ui\\src\\Ui\\UiWebsocket.py', 'block')
+        os.startfile(block_path)
 
     def actionCheckUpdate(self, to):
         import httplib
@@ -456,5 +460,5 @@ class UiWebsocket(object):
             update.update()
         except Exception, err:
             print "Update error: %s" % err
-        # import atexit
-        # atexit._run_exitfuncs()
+            # import atexit
+            # atexit._run_exitfuncs()

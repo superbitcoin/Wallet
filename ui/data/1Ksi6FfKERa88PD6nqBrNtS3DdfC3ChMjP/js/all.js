@@ -534,7 +534,7 @@ function sendToAddress() {
                     } else {
                         // _this.addLine("钱包信息: <pre>" + JSON.stringify(wallet_info, null, 2) + "</pre>");
                         walletInfo = wallet_info[0].result;
-                        if (wallet_info[0] !== null && wallet_info[0].result.unlocked_until !== null) {
+                        if (wallet_info[0] != null && wallet_info[0].result.unlocked_until != null) {
                             isWalletLocked = true;
                         } else {
                             // alert("钱包未加密，是否现在加密？");
