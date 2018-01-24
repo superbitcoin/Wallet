@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wallet</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <!--<script src="js/jquery.cookie.js"></script>-->
+    <script src="js/i18n.js"></script>
+    <script type="text/javascript" src="js/qrcode.js"></script>
+    <script src="js/main.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <script type="text/javascript">
+    </script>
+</head>
+<body>
+<div class="header">
+    <div class="header-box">
+        <img src="images/gg02.png" class="logo">
+        <ul>
+            <li><a class="menu_a" href="javascript:Page.backupWallet()" data-locale="menu_wallet">钱包备份</a></li>
+            <li><a class="menu_a" href="javascript:changePwd()" data-locale="menu_setpass">设置密码</a></li>
+            <li><a class="menu_a" href="javascript:ShowDiv('MyDiv9','fade')" data-locale="menu_help">帮助</a></li>
+        </ul>
+    </div>
+</div>
+<div class="header_list">
+    <img src="images/top.png" alt="">
+</div>
+
+<div id="fade" class="black_overlay"></div>
+
+<div id="MyDiv0" class="white_content" style="height:270px;">
+    <div class="layoutr-pstitle">
+        <span data-locale="change_pass">修改密码</span>
+        <div onclick="CloseDiv('MyDiv0','fade')" style="float:right;margin:10px;" class="close"> x</div>
+    </div>
+    <div class="move">
+        <form>
+            <p style="margin-top:12px;"><label data-locale="pass_old">原始密码:</label>
+                <input id="pwd_current" type="password" name="fname"/></p>
+            <p style="margin-top:12px;"><label data-locale="pass_new">新&nbsp;&nbsp;密&nbsp;&nbsp;码:</label>
+                <input id="pwd_new" type="password" name="fname"/>
+            </p>
+            <p style="margin-top:12px;"><label data-locale="pass_confim">确认密码:</label>
+                <input id="pwd_new_confirm" type="password" name="fname"/>
+            </p>
+            <input type="button" onclick="Page.walletPassphraseChange()" data-locale="right" value="确认"/>
+        </form>
+    </div>
+</div>
+
+<div id="MyDiv2" class="white_content" style="height:160px;">
+    <div class="layoutr-pstitle">
+        <span data-locale="send_confim">修改密码</span>
+        <div onclick="CloseDiv('MyDiv2','fade')" style="float:right;margin:10px;"> x</div>
+    </div>
+    <div style="" class="move">
+        <form>
+            <p style="margin-top:20px;"><label data-locale="input_pass">输入密码</label>
+                <input type="password" name="fname"/></p>
+            <input data-locale="send" type="button" value="发送"/>
+        </form>
+    </div>
+</div>
+
+<div id="MyDiv3" class="white_content" style="height:160px;">
+    <div class="layoutr-pstitle">
+        <span data-locale="newtag">修改密码</span>
+        <div onclick="CloseDiv('MyDiv3','fade')" style="float:right;margin:10px;"> x</div>
+    </div>
+    <div style="" id="move">
+        <form method="get">
+            <p style="margin-top:20px;">
+                <label data-locale="tag_name">标签命名:</label>
+                <input type="password" name="fname"/>
+            </p>
+            <input type="submit" data-locale="right" value="确认"/>
+        </form>
+    </div>
+</div>
+
+<div id="MyDiv4" class="white_content" style="height:270px;">
+    <div class="layoutr-pstitle">
+        <span data-locale="change_pass">设置密码</span>
+        <a onclick="CloseDiv('MyDiv4','fade')" style="float:right;margin:10px;" class="close">x</a>
+    </div>
+    <div class="move">
+        <form>
+            <p style="margin-top:12px;"><label
+                    data-locale="pass_old">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;密码:</label>
+                <input id="pwd" type="password" name="fname"/></p>
+            <p style="margin-top:12px;"><label data-locale="pass_confim">确认密码:</label>
+                <input id="pwd_confirm" type="password" name="fname"/>
+            </p>
+            <input type="button" onclick="Page.encryptWallet()" data-locale="right" value="确认"/>
+        </form>
+    </div>
+</div>
+
+<div id="MyDiv7" class="white_content" style="height:200px;">
+    <div class="layoutr-pstitle">
+        <span data-locale="man_address">智能合约</span>
+        <div onclick="CloseDiv('MyDiv7','fade')" style="float:right;margin:10px;" class="close"> x</div>
+    </div>
+    <div style="text-align:center;margin-top:45px;">
+        敬请期待~
+    </div>
+</div>
+
+<div id="MyDiv9" class="white_content" style="height:200px;">
+    <div class="layoutr-pstitle">
+        <span data-locale="man_address">帮助</span>
+        <div onclick="CloseDiv('MyDiv9','fade')" style="float:right;margin:10px;" class="close"> x</div>
+    </div>
+    <div style="text-align:center;margin-top:45px;">
+        wallet version: 0.1beta<br><br>
+        <a href="https://github.com/superbitcoin/Wallet" target="view_window">github</a>
+    </div>
+</div>
+
+<div id="MyDiv10" class="white_content" style="height:200px;">
+    <div class="layoutr-pstitle">
+        <span data-locale="man_address">更新</span>
+        <div onclick="CloseDiv('MyDiv10','fade')" style="float:right;margin:10px;" class="close"> x</div>
+    </div>
+    <div style="text-align:center;margin-top:45px;">
+        <div>有新版本，是否更新</div>
+        <input type="button" class="button" onclick="Page.updateWalletUi()" data-locale="right" value="确认"/>
+    </div>
+</div>
+
+<div id="MyDiv8" class="white_content" style="height:200px;">
+    <div class="layoutr-pstitle">
+        <span data-locale="man_address">地址管理</span>
+        <div onclick="CloseDiv('MyDiv8','fade')" style="float:right;margin:10px;"> x</div>
+    </div>
+    <div style="text-align:center" class="move">
+        <table border="1" style="width:100%">
+            <tr class="box1">
+                <th data-locale="address">地址</th>
+                <th data-locale="tag1">标签</th>
+            </tr>
+            <tr>
+                <td>1LG2ieN41UaswwScdQE4mwKeZoSSsAi9nf</td>
+                <td>a001</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="wrapper">
+    <div class="wrapper-box">
+        <div class="layout-left">
+            <ul class="layoutl-top" id="menu">
+                <li id="icon01" class="li-active" onclick="Page.recordAddress(0,'record_address')">概况</li>
+                <li id="icon02">发送</li>
+                <li id="icon03" onclick="Page.accountList()">接收</li>
+                <li id="icon04" onclick="Page.recordAddress(0,'record_all')">交易记录</li>
+                <li id="icon05" onclick="smartNotice()">智能合约</li>
+            </ul>
+            <div class="layout-last">
+                <p>网络同步</p>
+                <div class="layout-lastbg"><label id="process"></label></div>
+                <span id="leftTime" style="font-size: 12px"></span>
+            </div>
+        </div>
+
+        <div class="layout-right tab-active">
+            <div class="layoutr-title">
+                <span>余额</span>
+            </div>
+            <div class="layoutr_main">
+                <div class="layoutrmain_font">
+                    <span id="balance_all">0.00000000</span>
+                    SBTC总额
+                </div>
+                <dl>
+                    <dt>可使用的余额：</dt>
+                    <dd id="bal_available">0.00000000SBTC</dd>
+                </dl>
+                <dl>
+                    <dt>等待中的余额：</dt>
+                    <dd id="bal_unconfirm">0.00000000SBTC</dd>
+                </dl>
+            </div>
+            <div class="layoutr-title">
+                <span>历史交易</span>
+            </div>
+            <div class="layoutr-content">
+                <table border="1" id="record_address">
+                    <tr class="box1">
+                        <th>日期</th>
+                        <th>类型</th>
+                        <th>地址</th>
+                        <th>金额</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="layout-right">
+            <div class="layoutr-title">
+                <span>发送</span>
+            </div>
+            <div class="center">
+                <div class="form-group">
+                    <label class="label">付给（T）：</label>
+                    <input id="toAddress" class="form-control"
+                           placeholder="请输入一个比特币地址(例如 1NS7iag9dhsjpiuopwqm,vcmHISA)">
+                </div>
+                <div class="form-group">
+                    <label class="label">金额（M）：</label>
+                    <input id="pay_value" class="form-control money" placeholder="">
+                </div>
+            </div>
+
+            <div class="send-out">
+                <span id="balance_send">余额：0.00000000</span>
+                <input type="submit" value="发送" onclick="sendToAddress()"/>
+                <div id="MyDiv1" class="white_content" style="display: none">
+                    <div style="" class="move" id="">
+                        <span onclick="CloseDiv('MyDiv1','fade')"> x </span>
+                        <form method="get">
+                            <p>输入密码: <input id="trade_pwd" type="password" name="fname"/></p>
+                            <input type="button" value="发送" onclick="Page.walletPassPhrase()"/>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <span id="payHash"></span>
+        </div>
+
+        <div class="layout-right layout1">
+            <div class="layoutr-title">
+                <span>接受</span>
+            </div>
+            <div class="take-over">
+                <div class="receive-center">
+                    <div class="form-group">我的地址</div>
+                    <div class="form-group">地址：
+                        <select id="select_receive_addr">
+                        </select>
+                        <!--<input type="button" value="" style="">-->
+                    </div>
+
+                    <div class="btn">
+                        <input id="Button1" type="button" value="新建地址" onclick="ShowDiv('MyDiv','fade')">
+                        <div id="MyDiv" class="white_content">
+                            <div style="" class="move">
+                                <span onclick="CloseDiv('MyDiv','fade')">X</span>
+                                <form>
+                                    <p>地址标签: <input type="text" id="label_newAddr" name="fname"/></p>
+                                    <input id="btn_newAddr" type="button" value="确认" onclick="Page.getNewAddress()"/>
+                                </form>
+                            </div>
+                        </div>
+                        <!--<input type="button" value="管理地址" id="showHidden">-->
+                        <!--<input type="button" data-locale="man_address" value="管理地址" onclick="ShowDiv('MyDiv8','fade')">-->
+                    </div>
+                </div>
+                <div class="code">
+                    <div id="qrcode_tx" style="text-align: center;margin-left: 20px"></div>
+                    <p id="qrcode" onclick="showQR()">扫描二维码获取地址</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="layout-right">
+            <div class="layoutr-title">
+                <span>交易记录</span>
+            </div>
+            <div class="layoutr-content">
+                <table border="1" id="record_all">
+                    <tr class="box1">
+                        <th>日期</th>
+                        <th>类型</th>
+                        <th>地址</th>
+                        <th>金额</th>
+                    </tr>
+                </table>
+                <div class="page-control">
+                    <a href="javascript:Page.recordAll('next','record_all')" class="page">
+                        <div class="page_next"></div>
+                    </a>
+                    <a href="javascript:Page.recordAll('front','record_all')" class="page">
+                        <div class="page_front"></div>
+                    </a>
+                    <a href="javascript:Page.recordAll(0,'record_all')" class="page">
+                        <div class="page_index"></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="layout">
+            <div class="layoutr-title">
+                <span>交易记录</span>
+            </div>
+            <div class="layoutr-content">
+                <table border="1" id="record_receive">
+                    <tr class="box1">
+                        <th>标签</th>
+                        <th>地址</th>
+                        <th>操作</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <ul id="messages">
+    </ul>
+    <script type="text/javascript" src="js/all.js" async></script>
+    <script>
+        var qrcode = new QRCode(document.getElementById("qrcode_tx"), {
+            width: 100,
+            height: 100,
+        });
+
+        $("#select_receive_addr").change(function () {
+            var address = $("#select_receive_addr").find("option:selected").text();
+            showQR(address);
+        });
+
+        function timer() {
+            Page.getBlockChainInfo();
+            console.info("timer")
+        }
+
+        window.setInterval(timer, 5 * 60 * 1000);
+    </script>
+</div>
+</body>
+</html>                     
