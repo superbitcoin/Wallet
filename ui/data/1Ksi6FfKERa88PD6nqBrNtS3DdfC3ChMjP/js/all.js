@@ -3,6 +3,7 @@
 var record_index = 0;
 var info;
 var blockChainInfo;
+var phraseType = 0;
 
 function sendToAddress() {
     var addr = document.getElementById("toAddress").value;
@@ -169,6 +170,7 @@ function sendToAddress() {
         extend(SbtcChat, superClass);
 
         function SbtcChat() {
+            this.signMsg = bind(this.signMsg, this);
             this.updateWalletUi = bind(this.updateWalletUi, this);
             this.checkUpdate = bind(this.checkUpdate, this);
             this.backupWallet = bind(this.backupWallet, this);
@@ -252,19 +254,34 @@ function sendToAddress() {
         };
 
         SbtcChat.prototype.dumpprivkey = function () {
-            var address = document.getElementById("addr_private").value;
+            // var address = document.getElementById("addr_private").value;
+            var address = $("#select_export_addr option:selected").text();
             return this.cmd("walletDumpprivkey", [address], (function (_this) {
                 return function (result) {
+                    CloseDiv('MyDiv12', 'fade');
+                    if (result != null && result[0].result != null) {
+                        alert(address + '的私钥是：' + result[0].result);
+                    } else {
+                        alert("导出私钥出错");
+                    }
                 };
             })(this));
         };
 
         SbtcChat.prototype.importPriKey = function () {
-            var privateKey = document.getElementById("privateKey").value;
-            var privateKeyLabel = document.getElementById("privateKeyLabel").value;
+            // var privateKey = document.getElementById("privateKey").value;
+            // var privateKeyLabel = document.getElementById("privateKeyLabel").value;
+            var privateKey = document.getElementById("tx_priKey").value;
+            var privateKeyLabel = 'outKey';
             return this.cmd("walletImportPrivkey", [privateKey, privateKeyLabel], (function (_this) {
                 return function (result) {
-
+                    document.getElementById("tx_priKey").innerHTML = "";
+                    CloseDiv('MyDiv12', 'fade');
+                    if (result != null && result.error == null) {
+                        alert('私钥导入成功');
+                    } else {
+                        alert('私钥导入失败：' + result.error);
+                    }
                 };
             })(this));
         };
@@ -295,24 +312,29 @@ function sendToAddress() {
         };
         var recevieAddr = null;
         var addrList = [];
-        SbtcChat.prototype.accountList = function () {
+        SbtcChat.prototype.accountList = function (type) {
             return this.cmd("walletListAccounts", [], (function (_this) {
                 return function (result) {
                     var list = result[0].result;
                     $("#select_receive_addr").empty();
                     recevieAddr = null;
                     for (var item in list) {
-                        Page.addressList(item);
+                        Page.addressList(item, type);
                     }
                     if (addrList !== null && addrList.length > 0) {
                         // qrcode.makeCode(addrList[0]);
                         showQR(addrList[0]);
+                        if (type == 1) {
+                            ShowDiv('MyDiv12', 'fade');
+                        } else if (type == 2) {
+                            ShowDiv('MyDiv15', 'fade');
+                        }
                     }
                 };
             })(this));
         };
 
-        SbtcChat.prototype.addressList = function (account) {
+        SbtcChat.prototype.addressList = function (account, type) {
             // mydSgrG816yq8Kjhe3uW3bkjFLgBnkaCs1
             // n2ynxqSzhgyJJ5KBHPijKzNMqsgUd9Jsia "123"
             return this.cmd("walletGetAddressesListByAccount", [account], (function (_this) {
@@ -325,15 +347,21 @@ function sendToAddress() {
                         addrList.push(list[i]);
                         // $("#select_send_addr").append("<option>" + list[i] + "</option>");
                         $("#select_receive_addr").append("<option>" + list[i] + "</option>");
+                        $("#select_export_addr").append("<option>" + list[i] + "</option>");
+                        $("#select_sign_addr").append("<option>" + list[i] + "</option>");
                     }
                     if (addrList !== null && addrList.length > 0) {
                         qrcode.makeCode(addrList[0]);
+                        if (type == 1) {
+                            ShowDiv('MyDiv12', 'fade');
+                        } else if (type == 2) {
+                            ShowDiv('MyDiv15', 'fade');
+                        }
                         // showQR(addrList[0]);
                     }
                 };
             })(this));
         };
-
 
         SbtcChat.prototype.recordAll = function (index, _type) {
             var params = [0];
@@ -439,7 +467,7 @@ function sendToAddress() {
         SbtcChat.prototype.backupWallet = function () {
             return this.cmd("backupWallet", [], (function (_this) {
                 return function (result) {
-                    return document.getElementById("balance").innerHTML = JSON.stringify(result[0].result, null, 2) + "\n";
+                    // return document.getElementById("balance").innerHTML = JSON.stringify(result[0].result, null, 2) + "\n";
                 };
             })(this));
         };
@@ -447,7 +475,11 @@ function sendToAddress() {
         SbtcChat.prototype.getInfo = function () {
             this.cmd("walletGetInfo", [], (function (_this) {
                 return function (_info) {
-                    info = _info[0].result;
+                    if (_info != null) {
+                        info = _info[0].result;
+                    } else {
+                        alert("获取钱包信息失败，请刷新页面或重启钱包");
+                    }
                 };
             })(this));
         };
@@ -484,8 +516,13 @@ function sendToAddress() {
             })(this));
         };
 
-        SbtcChat.prototype.walletPassPhrase = function () {
-            var password = document.getElementById("trade_pwd").value;
+        SbtcChat.prototype.walletPassPhrase = function (type) {
+            var password;
+            if (type == 0) {
+                password = document.getElementById("trade_pwd").value;
+            } else {
+                password = document.getElementById("_trade_pwd").value;
+            }
             if (password === "") {
                 alert("请输入密码");
                 CloseDiv('MyDiv1', 'fade1');
@@ -494,13 +531,23 @@ function sendToAddress() {
             this.cmd("walletPassPhrase", [password], (function () {
                 return function (result) {
                     CloseDiv('MyDiv1', 'fade1');
+                    CloseDiv('MyDiv11', 'fade1');
                     document.getElementById("trade_pwd").innerHTML = "";
+                    document.getElementById("_trade_pwd").innerHTML = "";
                     if (result !== null && result[0].error === null) {
-                        Page.sendToAddress();
+                        if (type == 0) {
+                            Page.sendToAddress();
+                        } else if (type == 1) {
+                            Page.signMsg();
+                        } else if (type == 2) {
+                            Page.dumpprivkey();
+                        } else if (type == 3) {
+                            Page.importPriKey();
+                        }
                     } else {
                         alert("密码错误");
                     }
-                    document.getElementById("balance").innerHTML = JSON.stringify(result[0].result, null, 2) + "\n";
+                    // document.getElementById("balance").innerHTML = JSON.stringify(result[0].result, null, 2) + "\n";
                 };
             })(this));
         };
@@ -580,6 +627,21 @@ function sendToAddress() {
             })(this));
         };
 
+        SbtcChat.prototype.signMsg = function () {
+            var message = "123";
+            var address = addrList[0];
+            return this.cmd("signMsg", [address, message], (function (_this) {
+                return function (_result) {
+                    if (_result != null && _result[0].result != null) {
+                        // alert(_result[0].result);
+                        document.getElementById("signResult").innerHTML = "签名结果：" + _result[0].result;
+                    } else {
+                        alert('签名错误');
+                    }
+                };
+            })(this));
+        };
+
         SbtcChat.prototype.checkUpdate = function () {
             return this.cmd("checkUpdate", [], (function (_this) {
                 return function (result) {
@@ -592,7 +654,7 @@ function sendToAddress() {
         };
 
         SbtcChat.prototype.updateWalletUi = function () {
-            alert("正在更新，请稍等");
+            // alert("正在更新，请稍等");
             CloseDiv("MyDiv10", "fade");
             return this.cmd("updateWalletUi", [], (function (_this) {
                 return function (result) {

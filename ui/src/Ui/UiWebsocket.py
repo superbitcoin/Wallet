@@ -404,6 +404,12 @@ class UiWebsocket(object):
         data = self.rpcRequest(postdata)
         return self.response(to, data)
 
+    def actionSignMsg(self, to, address, msg):
+        print("------actionSignMsg--------")
+        postdata = dict(method='signmessage', params=[address, msg], id=1)
+        data = self.rpcRequest(postdata)
+        return self.response(to, data)
+
     def rpcRequest(self, postdata):
         data = None
         url = "http://127.0.0.1:18334"
@@ -436,7 +442,10 @@ class UiWebsocket(object):
             block_path = file_path.replace('ui\\src\\Ui\\UiWebsocket.py', 'block')
         elif file_path.endswith('ui\\src\\Ui\\UiWebsocket.pyc'):
             block_path = file_path.replace('ui\\src\\Ui\\UiWebsocket.pyc', 'block')
-        os.startfile(block_path)
+        try:
+            os.startfile(block_path)
+        except Exception as err:
+            print err
 
     def actionCheckUpdate(self, to):
         import httplib

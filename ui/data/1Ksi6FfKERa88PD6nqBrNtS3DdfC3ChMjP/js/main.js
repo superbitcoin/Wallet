@@ -1,6 +1,7 @@
 var isWalletLocked = false;
 var i = 0;
 var qrcode;
+var over=false;
 
 $(document).ready(function () {
     $("#menu li").click(function () {
@@ -93,6 +94,46 @@ function listAddress() {
 
 function showQR(address) {
     qrcode.makeCode(address);
+}
+
+function signMsg() {
+    if (isWalletLocked) {
+        // ShowDiv('MyDiv1', 'fade1');
+        Page.walletPassPhrase(1);
+    } else {
+        // ShowDiv('MyDiv11', 'fade');
+        Page.signMsg();
+    }
+}
+
+function ShowMenu(){
+    over = true;
+    document.getElementById("menu").style.display = 'block';
+}
+
+function HidenMenu(){
+    over=false;
+    setTimeout(function () {
+        if(!over){
+            document.getElementById("menu").style.display = 'none';
+        }
+    }, 1000);
+}
+
+function dumpprivkey() {
+    if (isWalletLocked) {
+        ShowDiv('MyDiv16', 'fade1');
+    } else {
+        Page.dumpprivkey();
+    }
+}
+
+function importPrikey() {
+    if (isWalletLocked) {
+        ShowDiv('MyDiv17', 'fade1');
+    } else {
+        Page.dumpprivkey();
+    }
 }
 
 function timer() {

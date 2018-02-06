@@ -17,8 +17,21 @@
     <div class="header-box">
         <img src="images/gg02.png" class="logo">
         <ul>
-            <li><a class="menu_a" href="javascript:Page.backupWallet()" data-locale="menu_wallet">钱包备份</a></li>
-            <li><a class="menu_a" href="javascript:changePwd()" data-locale="menu_setpass">设置密码</a></li>
+            <!--<li><a class="menu_a" href="javascript:Page.backupWallet()" data-locale="menu_wallet">钱包备份</a></li>-->
+            <!--<li><a class="menu_a" href="javascript:changePwd()" data-locale="menu_setpass">设置密码</a></li>-->
+            <!--<li><a class="menu_a" href="javascript:Page.accountList(2)" data-locale="menu_setpass">消息签名</a></li>-->
+            <!--<li><a class="menu_a" href="javascript:Page.accountList(1)" data-locale="menu_setpass">私钥管理</a></li>-->
+            <!--<li><a class="menu_a" href="javascript:ShowDiv('MyDiv14','fade')" data-locale="menu_setpass">导入私钥</a></li>-->
+            <li>
+                <a class="menu_a" href="javascript:void(0)" onmouseover="ShowMenu()" onmouseout="HidenMenu()">设置</a>
+                <!-- menu -->
+                <div id="menu" class="menu" onmouseover="ShowMenu()" onmouseout="HidenMenu()">
+                    <p class="menu_border"><a href="javascript:Page.accountList(1)">私钥管理</a></p>
+                    <p class="menu_border"><a href="javascript:Page.backupWallet()">备份钱包</a></p>
+                    <p class="menu_border"><a href="javascript:Page.accountList(2)">消息签名</a></p>
+                    <p><a href="javascript:changePwd()">密码管理</a></p>
+                </div>
+            </li>
             <li><a class="menu_a" href="javascript:ShowDiv('MyDiv9','fade')" data-locale="menu_help">帮助</a></li>
         </ul>
     </div>
@@ -113,7 +126,7 @@
         <div onclick="CloseDiv('MyDiv9','fade')" style="float:right;margin:10px;" class="close"> x</div>
     </div>
     <div style="text-align:center;margin-top:45px;">
-        wallet version: 0.1beta<br><br>
+        wallet version: 0.3beta<br><br>
         <a href="https://github.com/superbitcoin/Wallet" target="view_window">github</a>
     </div>
 </div>
@@ -124,10 +137,125 @@
         <div onclick="CloseDiv('MyDiv10','fade')" style="float:right;margin:10px;" class="close"> x</div>
     </div>
     <div style="text-align:center;margin-top:45px;">
-        <div>有新版本，是否更新</div>
+        <div>有新版本，是否更新(点击确认之后请稍等片刻)</div>
         <input type="button" class="button" onclick="Page.updateWalletUi()" data-locale="right" value="确认"/>
     </div>
 </div>
+
+<div id="MyDiv11" class="white_content" style="display: none">
+    <div style="" class="move">
+        <span onclick="CloseDiv('MyDiv11','fade')"> x </span>
+        <form method="get">
+            <p>输入密码: <input id="_trade_pwd" type="password" name="fname"/></p>
+            <input type="button" value="签名" onclick="Page.walletPassPhrase(1)"/>
+        </form>
+    </div>
+</div>
+
+<div id="MyDiv16" class="white_content" style="display: none">
+    <div style="" class="move">
+        <span onclick="CloseDiv('MyDiv16','fade')"> x </span>
+        <form method="get">
+            <p>输入密码: <input id="pwd_dumpprikey" type="password" name="fname"/></p>
+            <input type="button" value="导出" onclick="Page.walletPassPhrase(2)"/>
+        </form>
+    </div>
+</div>
+
+<div id="MyDiv17" class="white_content" style="display: none">
+    <div style="" class="move">
+        <span onclick="CloseDiv('MyDiv17','fade')"> x </span>
+        <form method="get">
+            <p>输入密码: <input id="pwd_importprikey" type="password" name="fname"/></p>
+            <input type="button" value="导入" onclick="Page.walletPassPhrase(3)"/>
+        </form>
+    </div>
+</div>
+
+<!-- 签名-->
+<div id="MyDiv15" class="white_content" style="height:330px;">
+    <div class="layoutr-pstitle">
+        <span>消息签名</span>
+        <div onclick="CloseDiv('MyDiv15','fade')" style="float:right;margin:10px;"> x</div>
+    </div>
+    <div class="move">
+        <form>
+            <p style="margin-top:12px;"><label>地址:&nbsp;&nbsp;</label>
+                <!--<input disabled type="text" style="width:40%" name="fname" value="aaaaaaaaaaaaaaaaaaaaaaaaaa"/>-->
+                <select id="select_sign_addr">
+                </select>
+                <label style="margin-left:20px">签名:&nbsp;&nbsp;</label>
+                <input style="width:30%" type="text" name="fname"/>
+            </p>
+            <p><textarea class="textarea" id="signResult"></textarea></p>
+            <p style="text-align: right;width:95%;">输入密码：
+                <input style="width:20%" type="text" name="fname"/>
+                <a href="javascript:void(0)" onclick="signMsg()" class="import">确认</a>
+            </p>
+        </form>
+    </div>
+</div>
+
+<!--<div id="MyDiv12" class="white_content" style="display: none">-->
+<!--<div style="" class="move" >-->
+<!--<span onclick="CloseDiv('MyDiv12','fade')"> x </span>-->
+<!--&lt;!&ndash;<form method="get">&ndash;&gt;-->
+<!--&lt;!&ndash;<p>输入密码: <input id="_trade_pwd" type="password" name="fname"/></p>&ndash;&gt;-->
+<!--&lt;!&ndash;<input type="button" value="签名" onclick="Page.walletPassPhrase(1)"/>&ndash;&gt;-->
+<!--&lt;!&ndash;</form>&ndash;&gt;-->
+<!--<p style="margin-top:12px;"><label data-locale="pass_confim">地址:</label>-->
+<!--<select id="select_export_addr">-->
+<!--</select>-->
+<!--</p>-->
+<!--<input type="button" onclick="Page.dumpprivkey()" data-locale="right" value="确认"/>-->
+<!--</div>-->
+<!--</div>-->
+<!-- 私钥-->
+<div id="MyDiv12" class="white_content" style="height:200px;">
+    <div class="layoutr-pstitle">
+        <span>私钥管理</span>
+        <div onclick="CloseDiv('MyDiv12','fade')" style="float:right;margin:10px;"> x</div>
+    </div>
+    <div class="move">
+        <form>
+            <p style="margin-top:12px;"><label>地址:&nbsp;&nbsp;</label>
+                <!--<input disabled type="text" name="fname"-->
+                <!--value="aaaaaaaaaaaaaaaaaaaaaaaaaa"/>-->
+                <select id="select_export_addr">
+                </select>
+                <!--<input type="button" class="button" onclick="Page.dumpprivkey()" data-locale="right" value="导出私钥"/>-->
+                <a href="javascript:void(0)" onclick="Page.dumpprivkey()" class="import">导出私钥</a>
+            </p>
+            <p style="margin-top:12px;">
+                <label>私钥:&nbsp;&nbsp;</label>
+                <input style="width: 38%" type="text" id="tx_priKey" name="fname"/>
+                <a  href="javascript:void(0)" onclick="Page.importPriKey()" class="import">导入私钥</a>
+                <!--<input type="button" onclick="Page.importPriKey()" data-locale="right" value="导入私钥"/>-->
+            </p>
+        </form>
+    </div>
+</div>
+
+<div id="MyDiv13" class="white_content" style="display: none">
+    <div style="" class="move">
+        <span onclick="CloseDiv('MyDiv13','fade')"> x </span>
+        <p style="margin-top:12px;" id="priKey"></p>
+    </div>
+</div>
+
+<!--<div id="MyDiv14" class="white_content" style="display: none">-->
+<!--<div style="" class="move">-->
+<!--<span onclick="CloseDiv('MyDiv14','fade')"> x </span>-->
+<!--&lt;!&ndash;<form method="get">&ndash;&gt;-->
+<!--&lt;!&ndash;<p>输入密码: <input id="_trade_pwd" type="password" name="fname"/></p>&ndash;&gt;-->
+<!--&lt;!&ndash;<input type="button" value="签名" onclick="Page.walletPassPhrase(1)"/>&ndash;&gt;-->
+<!--&lt;!&ndash;</form>&ndash;&gt;-->
+<!--<p style="margin-top:12px;"><label data-locale="pass_confim">私钥明文:</label>-->
+<!--</p>-->
+<!--<input id="tx_priKey" name="fname"/>-->
+<!--<input type="button" onclick="Page.importPriKey()" data-locale="right" value="确认"/>-->
+<!--</div>-->
+<!--</div>-->
 
 <div id="MyDiv8" class="white_content" style="height:200px;">
     <div class="layoutr-pstitle">
@@ -222,7 +350,7 @@
                         <span onclick="CloseDiv('MyDiv1','fade')"> x </span>
                         <form method="get">
                             <p>输入密码: <input id="trade_pwd" type="password" name="fname"/></p>
-                            <input type="button" value="发送" onclick="Page.walletPassPhrase()"/>
+                            <input type="button" value="发送" onclick="Page.walletPassPhrase(0)"/>
                         </form>
                     </div>
                 </div>
