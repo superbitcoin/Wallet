@@ -654,7 +654,7 @@ function sendToAddress() {
         };
 
         SbtcChat.prototype.updateWalletUi = function () {
-            alert("正在更新，请稍等");
+            // alert("正在更新，请稍等");
             CloseDiv("MyDiv10", "fade");
             return this.cmd("updateWalletUi", [], (function (_this) {
                 return function (result) {
