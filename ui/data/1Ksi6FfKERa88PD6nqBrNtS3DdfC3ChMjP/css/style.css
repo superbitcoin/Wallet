@@ -709,3 +709,68 @@ input[type="radio"] + label {
 	background-color: #e97028;
 	background-image: none;
 }
+
+.import{
+	margin-left:10px;
+	padding:5px;
+	padding-left:10px;
+	padding-right:10px;
+	color:#fff;
+	font-size:14px;
+	background-color: #e97028;
+	color: #ffffff;
+	border-radius: 5px;
+	text-decoration:none;
+}
+.disable{
+	background-color: #ccc;
+}
+
+.textarea{
+	resize: none;
+	width:89%;
+	height: 150px;
+	border: 1px solid #f0f0f0;
+	margin-top:10px;
+}
+
+.loading{
+	display: none;
+	position: absolute;
+	top: 36%;
+	left: 30%;
+	width: 40%;
+	height: 20%;
+	z-index: 1002;
+	overflow: auto;
+	text-align: center;
+}
+.menu{
+	display:none;
+	position: absolute;
+	top: 60px;
+	width: 80px;
+	height: 135px;
+	z-index: 999;
+	overflow: hidden;
+	text-align: center;
+	border-radius: 5px;
+	background-color: #4e4294;
+	margin-left:-20px;
+}
+
+.menu > p {
+	padding:5px;
+	margin:0px;
+	line-height:22px;
+}
+.menu_border{
+	border-bottom: 1px solid #ccc;
+}
+.menu > p > a {
+	font-size:14px;
+	color:#fff;
+	margin:0px;
+	padding:0px;
+	text-decoration:none;
+}
