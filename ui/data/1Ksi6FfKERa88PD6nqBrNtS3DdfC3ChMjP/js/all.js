@@ -317,6 +317,8 @@ function sendToAddress() {
                 return function (result) {
                     var list = result[0].result;
                     $("#select_receive_addr").empty();
+                    $("#select_export_addr").empty();
+                    $("#select_sign_addr").empty();
                     recevieAddr = null;
                     for (var item in list) {
                         Page.addressList(item, type);
@@ -628,8 +630,10 @@ function sendToAddress() {
         };
 
         SbtcChat.prototype.signMsg = function () {
-            var message = "123";
-            var address = addrList[0];
+            // var message = "123";
+            // var address = addrList[0];
+            var message = document.getElementById("singTx").value;
+            var address = $("#select_sign_addr option:selected").text();
             return this.cmd("signMsg", [address, message], (function (_this) {
                 return function (_result) {
                     if (_result != null && _result[0].result != null) {

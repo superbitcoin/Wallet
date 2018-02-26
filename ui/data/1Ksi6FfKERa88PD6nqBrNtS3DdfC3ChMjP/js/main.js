@@ -66,6 +66,10 @@ function CloseDiv(show_div, bg_div) {
     bg_div = "fade";
     document.getElementById(show_div).style.display = 'none';
     document.getElementById(bg_div).style.display = 'none';
+
+    document.getElementById("singTx").innerHTML = "";
+    document.getElementById("signResult").innerHTML = "";
+    document.getElementById("signPwd").innerHTML = "";
 }
 
 function changePwd() {
