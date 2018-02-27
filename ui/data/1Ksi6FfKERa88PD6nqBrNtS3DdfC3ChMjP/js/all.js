@@ -649,7 +649,7 @@ function sendToAddress() {
         SbtcChat.prototype.checkUpdate = function () {
             return this.cmd("checkUpdate", [], (function (_this) {
                 return function (result) {
-                    console.info(result);
+                    // console.info(result);
                     if (result) {
                         ShowDiv("MyDiv10", "fade");
                     }

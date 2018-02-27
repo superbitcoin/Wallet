@@ -452,11 +452,11 @@
         });
 
         function timer() {
+            Page.getInfo();
             Page.getBlockChainInfo();
-            console.info("timer")
         }
 
-        window.setInterval(timer, 5 * 60 * 1000);
+        window.setInterval(timer, 5 * 1000);
     </script>
 </div>
 </body>
