@@ -1,7 +1,7 @@
 var isWalletLocked = false;
 var i = 0;
 var qrcode;
-var over=false;
+var over = false;
 
 $(document).ready(function () {
     $("#menu li").click(function () {
@@ -68,8 +68,9 @@ function CloseDiv(show_div, bg_div) {
     document.getElementById(bg_div).style.display = 'none';
 
     document.getElementById("singTx").innerHTML = "";
+    document.getElementById("singTx").value = "";
     document.getElementById("signResult").innerHTML = "";
-    document.getElementById("signPwd").innerHTML = "";
+    document.getElementById("signPwd").value = "";
 }
 
 function changePwd() {
@@ -110,15 +111,15 @@ function signMsg() {
     }
 }
 
-function ShowMenu(){
+function ShowMenu() {
     over = true;
     document.getElementById("menu").style.display = 'block';
 }
 
-function HidenMenu(){
-    over=false;
+function HidenMenu() {
+    over = false;
     setTimeout(function () {
-        if(!over){
+        if (!over) {
             document.getElementById("menu").style.display = 'none';
         }
     }, 1000);
@@ -126,6 +127,7 @@ function HidenMenu(){
 
 function dumpprivkey() {
     if (isWalletLocked) {
+        CloseDiv('MyDiv12', 'fade1');
         ShowDiv('MyDiv16', 'fade1');
     } else {
         Page.dumpprivkey();
@@ -134,9 +136,10 @@ function dumpprivkey() {
 
 function importPrikey() {
     if (isWalletLocked) {
+        CloseDiv('MyDiv12', 'fade1');
         ShowDiv('MyDiv17', 'fade1');
     } else {
-        Page.dumpprivkey();
+        Page.importPriKey();
     }
 }
 

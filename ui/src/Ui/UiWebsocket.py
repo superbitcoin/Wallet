@@ -406,6 +406,7 @@ class UiWebsocket(object):
 
     def actionSignMsg(self, to, address, msg):
         print("------actionSignMsg--------")
+        print("address: " + address + " msg: " + msg)
         postdata = dict(method='signmessage', params=[address, msg], id=1)
         data = self.rpcRequest(postdata)
         return self.response(to, data)
