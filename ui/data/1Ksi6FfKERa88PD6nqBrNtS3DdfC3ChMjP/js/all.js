@@ -276,11 +276,12 @@ function sendToAddress() {
             return this.cmd("walletImportPrivkey", [privateKey, privateKeyLabel], (function (_this) {
                 return function (result) {
                     document.getElementById("tx_priKey").innerHTML = "";
+                    document.getElementById("tx_priKey").value = "";
                     CloseDiv('MyDiv12', 'fade');
-                    if (result != null && result.error == null) {
+                    if (result != null && result[0].error == null) {
                         alert('私钥导入成功');
                     } else {
-                        alert('私钥导入失败：' + result.error);
+                        alert('私钥导入失败：' + JSON.stringify(result[0].error));
                     }
                 };
             })(this));
@@ -522,8 +523,18 @@ function sendToAddress() {
             var password;
             if (type == 0) {
                 password = document.getElementById("trade_pwd").value;
+                CloseDiv('MyDiv1', 'fade1');
+            }else if (type == 1) {
+                password = document.getElementById("signPwd").value;
+            }  else if (type == 2) {
+                password = document.getElementById("pwd_dumpprikey").value;
+                CloseDiv('MyDiv16', 'fade1');
+            } else if (type == 3) {
+                password = document.getElementById("pwd_importprikey").value;
+                CloseDiv('MyDiv17', 'fade1');
             } else {
                 password = document.getElementById("_trade_pwd").value;
+                CloseDiv('MyDiv11', 'fade1');
             }
             if (password === "") {
                 alert("请输入密码");
@@ -532,10 +543,10 @@ function sendToAddress() {
             }
             this.cmd("walletPassPhrase", [password], (function () {
                 return function (result) {
-                    CloseDiv('MyDiv1', 'fade1');
-                    CloseDiv('MyDiv11', 'fade1');
                     document.getElementById("trade_pwd").innerHTML = "";
                     document.getElementById("_trade_pwd").innerHTML = "";
+                    document.getElementById("pwd_dumpprikey").value = "";
+                    document.getElementById("pwd_importprikey").value = "";
                     if (result !== null && result[0].error === null) {
                         if (type == 0) {
                             Page.sendToAddress();
@@ -623,7 +634,8 @@ function sendToAddress() {
                     blockChainInfo = _blockChainInfo[0];
                     document.getElementById("process").style.width = ((info.blocks / blockChainInfo.result.headers ) * 100) + "%";
                     var _leftTime = blockChainInfo.result.headers - info.blocks;
-                    document.getElementById("leftTime").innerHTML = "Left：" + leftTime(_leftTime * 10);
+                    // document.getElementById("leftTime").innerHTML = "Left：" + leftTime(_leftTime * 10);
+                    document.getElementById("leftTime").innerHTML = "Left：" + _leftTime +" blocks";
                     Page.getBalance();
                 };
             })(this));
