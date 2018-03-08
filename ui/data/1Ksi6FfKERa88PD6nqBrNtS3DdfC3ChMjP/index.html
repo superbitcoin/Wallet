@@ -27,12 +27,13 @@
                 <!-- menu -->
                 <div id="menu" class="menu" onmouseover="ShowMenu()" onmouseout="HidenMenu()">
                     <p class="menu_border"><a href="javascript:Page.accountList(1)">私钥管理</a></p>
-                    <p class="menu_border"><a href="javascript:Page.backupWallet()">备份钱包</a></p>
+                    <p class="menu_border"><a href="javascript:ShowDiv('MyDiv18','fade')">备份钱包</a></p>
                     <p class="menu_border"><a href="javascript:Page.accountList(2)">消息签名</a></p>
                     <p><a href="javascript:changePwd()">密码管理</a></p>
                 </div>
             </li>
-            <li><a class="menu_a" href="javascript:ShowDiv('MyDiv9','fade')" data-locale="menu_help">帮助</a></li>
+            <li><a class="menu_a" href="javascript:ShowDiv('MyDiv9','fade')" data-locale="menu_help">帮助</a>
+            </li>
         </ul>
     </div>
 </div>
@@ -229,7 +230,7 @@
             <p style="margin-top:12px;">
                 <label>私钥:&nbsp;&nbsp;</label>
                 <input style="width: 38%" type="text" id="tx_priKey" name="fname"/>
-                <a  href="javascript:importPrikey()" class="import">导入私钥</a>
+                <a href="javascript:importPrikey()" class="import">导入私钥</a>
                 <!--<input type="button" onclick="Page.importPriKey()" data-locale="right" value="导入私钥"/>-->
             </p>
         </form>
@@ -276,6 +277,29 @@
     </div>
 </div>
 
+<div id="MyDiv14" class="white_content" style="height:200px;">
+    <div class="layoutr-pstitle">
+        <span data-locale="man_address">保存私钥</span>
+        <div onclick="CloseDiv('MyDiv14','fade')" style="float:right;margin:10px;"> x</div>
+    </div>
+    <div style="text-align:center; margin-top: 50px">
+        <a id="privateKeyTx" target="_blank" class="btn btn--raised green" data-ripple="true">
+            <div class="btn__content">点击下载保存私钥</div>
+        </a>
+    </div>
+</div>
+
+<div id="MyDiv18" class="white_content" style="height:200px;">
+    <div class="layoutr-pstitle">
+        <span data-locale="man_address">备份钱包</span>
+        <div onclick="CloseDiv('MyDiv18','fade')" style="float:right;margin:10px;"> x</div>
+    </div>
+    <div style="text-align:center; margin-top: 50px">
+        <span data-locale="man_address">打开文件夹后请备份文件夹里面的wallet.dat文件</span>
+        <a href="javascript:(0)" onclick="Page.backupWallet()" class="import">打开文件夹</a>
+    </div>
+</div>
+
 <div class="wrapper">
     <div class="wrapper-box">
         <div class="layout-left">
@@ -287,7 +311,7 @@
                 <li id="icon05" onclick="smartNotice()">智能合约</li>
             </ul>
             <div class="layout-last">
-                <p>网络同步</p>
+                <p id="loading">网络同步</p>
                 <div class="layout-lastbg"><label id="process"></label></div>
                 <span id="leftTime" style="font-size: 12px"></span>
             </div>
@@ -457,6 +481,21 @@
         }
 
         window.setInterval(timer, 5 * 1000);
+
+        var loadingTx = "网络同步...";
+
+        function loading() {
+            if (loadingTx == "网络同步...") {
+                loadingTx = "网络同步.";
+            } else if (loadingTx == "网络同步.") {
+                loadingTx = "网络同步..";
+            } else if (loadingTx == "网络同步..") {
+                loadingTx = "网络同步...";
+            }
+            document.getElementById("loading").innerHTML = loadingTx;
+        }
+
+        var loadingTimer = window.setInterval(loading, 2 * 1000);
     </script>
 </div>
 </body>

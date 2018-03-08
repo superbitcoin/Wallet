@@ -231,10 +231,13 @@ function sendToAddress() {
                     var input_available = document.getElementById("bal_available");
                     var balance_send = document.getElementById("balance_send");
 
-                    input_balance.innerHTML = result[0].result.balance + result[0].result.unconfirmed_balance;
+                    var balance_all = result[0].result.balance + result[0].result.unconfirmed_balance;
+
+                    input_balance.innerHTML = balance_all;
                     input_unconfirm.innerHTML = result[0].result.unconfirmed_balance + " SBTC";
                     input_available.innerHTML = result[0].result.balance + " SBTC";
-                    balance_send.innerHTML = "余额：" + result[0].result.balance + result[0].result.unconfirmed_balance + " SBTC";
+
+                    balance_send.innerHTML = "余额：" + balance_all + " SBTC";
                 };
             })(this));
         };
@@ -260,7 +263,10 @@ function sendToAddress() {
                 return function (result) {
                     CloseDiv('MyDiv12', 'fade');
                     if (result != null && result[0].result != null) {
-                        alert(address + '的私钥是：' + result[0].result);
+                        document.getElementById("privateKeyTx").download = Date.parse(new Date());
+                        document.getElementById("privateKeyTx").href = "data:text/plain,{\"version\":0.1,\"content\":" + JSON.stringify(result[0].result, null, 2) + "}"
+                        ShowDiv('MyDiv14', 'fade');
+                        // alert(address + '的私钥是：' + result[0].result);
                     } else {
                         alert("导出私钥出错");
                     }
@@ -524,9 +530,9 @@ function sendToAddress() {
             if (type == 0) {
                 password = document.getElementById("trade_pwd").value;
                 CloseDiv('MyDiv1', 'fade1');
-            }else if (type == 1) {
+            } else if (type == 1) {
                 password = document.getElementById("signPwd").value;
-            }  else if (type == 2) {
+            } else if (type == 2) {
                 password = document.getElementById("pwd_dumpprikey").value;
                 CloseDiv('MyDiv16', 'fade1');
             } else if (type == 3) {
@@ -538,7 +544,7 @@ function sendToAddress() {
             }
             if (password === "") {
                 alert("请输入密码");
-                CloseDiv('MyDiv1', 'fade1');
+                // CloseDiv('MyDiv1', 'fade1');
                 return;
             }
             this.cmd("walletPassPhrase", [password], (function () {
@@ -635,7 +641,13 @@ function sendToAddress() {
                     document.getElementById("process").style.width = ((info.blocks / blockChainInfo.result.headers ) * 100) + "%";
                     var _leftTime = blockChainInfo.result.headers - info.blocks;
                     // document.getElementById("leftTime").innerHTML = "Left：" + leftTime(_leftTime * 10);
-                    document.getElementById("leftTime").innerHTML = "Left：" + _leftTime +" blocks";
+                    if (_leftTime > 0) {
+                        document.getElementById("leftTime").innerHTML = "剩余：" + _leftTime + " 个块没有同步";
+                    } else {
+                        document.getElementById("loading").innerHTML = "网络同步";
+                        clearInterval(loadingTimer);
+                        document.getElementById("leftTime").innerHTML = "同步完成";
+                    }
                     Page.getBalance();
                 };
             })(this));
